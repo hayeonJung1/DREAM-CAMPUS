@@ -1,0 +1,175 @@
+/* =========================================
+   DREAM CAMPUS - brighter main hero only
+   Keep the existing homepage layout and other feature styling unchanged.
+========================================= */
+.hero-card {
+  background: linear-gradient(112deg, #FFE8F1 0%, #F5E9FF 42%, #E5F2FF 73%, #E7F7EF 100%);
+  border: 1px solid rgba(255, 255, 255, .82);
+  box-shadow: 0 12px 32px rgba(151, 126, 190, .12);
+}
+.hero-card::after {
+  background: linear-gradient(90deg,
+    rgba(255, 244, 249, .42) 0%,
+    rgba(250, 241, 255, .24) 43%,
+    rgba(235, 247, 255, .08) 100%);
+}
+.hero-kicker { color: #9672C5; }
+.hero-copy h1 { color: #494461; }
+.hero-copy h1 em { color: #A16FCC; }
+.hero-copy p { color: #706B88; }
+.primary-button {
+  background: linear-gradient(135deg, #B18AD9, #9B9BD5);
+  box-shadow: 0 7px 18px rgba(157, 137, 206, .26);
+}
+.primary-button:hover { background: linear-gradient(135deg, #9E78CC, #898BC8); }
+.hero-visual {
+  background: linear-gradient(145deg, #CFEAFF 0%, #EEDFF8 47%, #DDF3E9 100%);
+}
+.hero-visual::before {
+  background: radial-gradient(ellipse at 72% 18%, rgba(255, 250, 220, .94) 0%, transparent 35%),
+    linear-gradient(180deg, transparent 63%, rgba(135, 184, 168, .12) 100%);
+}
+.sun-glow { background: rgba(255, 242, 190, .86); }
+.campus-ground { background: linear-gradient(180deg, rgba(177, 220, 201, .88), #A9D7C3); }
+.campus-building {
+  background: linear-gradient(90deg, #AFC8E5, #FFF2E8 18%, #E4DFF1 80%, #B4CBE5);
+  border-color: #A4B8D3;
+  box-shadow: 0 13px 22px rgba(116, 142, 177, .16);
+}
+.campus-building::before { background: #9FB4D4; }
+.campus-building span {
+  background: repeating-linear-gradient(90deg, transparent 0 15px, #91A9CE 15px 18px),
+    repeating-linear-gradient(0deg, transparent 0 25px, #91A9CE 25px 28px);
+}
+.building-front { background: linear-gradient(90deg, #A8C4E4, #FFF0E6 30%, #C9D8EC); }
+.building-front::after { border-color: #9DB4D0; background: #8FA8C6; }
+.hero-leaf { color: rgba(255, 255, 255, .96); text-shadow: 0 2px 5px rgba(137, 131, 181, .18); }
+.app-home-back-button { flex: 0 0 auto; }
+
+@media (max-width: 850px) {
+  .app-home-back-button { width: 34px; height: 34px; }
+}
+
+
+/* =========================================
+   DREAM CAMPUS · Compact Home & Admission Calendar
+   No university-specific branding or fabricated official dates.
+========================================= */
+.dc-home-page { padding-top: 24px; }
+.dc-home-welcome-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr);
+  align-items: center;
+  gap: 22px;
+  min-height: 116px;
+  padding: 20px 24px;
+  border: 1px solid #EEE9F5;
+  border-radius: 20px;
+  background: linear-gradient(110deg, #FFF1F5 0%, #F4F0FF 52%, #EEF6FB 100%);
+  box-shadow: 0 8px 24px rgba(120, 117, 165, .06);
+}
+.dc-home-welcome-copy { min-width: 0; }
+.dc-home-welcome-kicker { display: inline-flex; align-items: center; gap: 7px; color: #9990C3; font-size: 10px; font-weight: 850; letter-spacing: 1.1px; }
+.dc-home-welcome-copy h1 { margin: 8px 0 5px; color: #565675; font-size: clamp(21px, 2.3vw, 29px); line-height: 1.35; letter-spacing: -.9px; }
+.dc-home-welcome-copy h1 em { color: #9A8FC7; font-style: normal; }
+.dc-home-welcome-copy p { margin: 0; color: #88869F; font-size: 12px; line-height: 1.6; }
+.dc-home-target-card {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; padding: 14px 16px;
+  border: 1px solid rgba(255,255,255,.95); border-radius: 16px; background: rgba(255,255,255,.82);
+  box-shadow: 0 5px 16px rgba(112, 112, 154, .06); text-align: left; transition: .18s ease;
+}
+.dc-home-target-card:hover { transform: translateY(-2px); border-color: #DCD8EF; box-shadow: 0 9px 20px rgba(112,112,154,.10); }
+.dc-home-target-icon { display: grid; place-items: center; flex: 0 0 46px; width: 46px; height: 46px; border-radius: 14px; color: #9297BF; background: #F0F0FA; }
+.dc-home-target-copy { display: flex; flex: 1; flex-direction: column; gap: 3px; min-width: 0; }
+.dc-home-target-copy small { color: #A09DB9; font-size: 9px; font-weight: 850; letter-spacing: 1px; }
+.dc-home-target-copy strong { overflow: hidden; color: #5B5F82; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+.dc-home-target-copy > span { overflow: hidden; color: #9291A6; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.dc-home-target-action { display: inline-flex; align-items: center; gap: 2px; flex: 0 0 auto; color: #858BB5; font-size: 10px; font-weight: 800; }
+.dc-home-quick-section { margin-top: 22px; }
+.dc-home-page .dc-dashboard-grid { margin-top: 18px; }
+.dc-home-dday-widget { min-height: 226px; }
+.dc-home-dday-widget .dc-widget-heading { align-items: center; }
+.dc-inline-manage-button { display: inline-flex; align-items: center; gap: 3px; margin-left: auto; padding: 7px 10px; border: 1px solid #E9E7F2; border-radius: 10px; color: #858BB4; background: #FAF9FE; font-size: 10px; font-weight: 750; white-space: nowrap; }
+.dc-inline-manage-button:hover { background: #F0EFF9; }
+.dc-home-nearest-event { display: flex; align-items: center; gap: 22px; min-height: 118px; margin-top: 14px; padding: 12px 17px; border: 1px solid #F0EDF7; border-radius: 15px; background: linear-gradient(110deg, #FBF8FF, #FFF9F8); }
+.dc-home-dday-number { flex: 0 0 auto; color: #888DBB; font-size: clamp(37px, 4vw, 53px); font-weight: 900; letter-spacing: -2px; line-height: 1; }
+.dc-home-nearest-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; min-width: 0; padding-left: 20px; border-left: 1px solid #E9E4F1; }
+.dc-home-nearest-copy strong { overflow-wrap: anywhere; color: #555873; font-size: 16px; }
+.dc-home-nearest-copy > span:last-child { color: #9794A9; font-size: 11px; }
+.dc-event-category-pill { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 999px; font-size: 9px; font-weight: 800; }
+.dc-event-category-pill.mock { color: #798FC2; background: #EEF2FC; }
+.dc-event-category-pill.csat { color: #A28CC7; background: #F3EEFB; }
+.dc-event-category-pill.essay { color: #6EA99D; background: #EBF6F2; }
+.dc-event-category-pill.interview { color: #C18E72; background: #FCF1E9; }
+.dc-event-category-pill.application { color: #C17D9D; background: #FBEFF4; }
+.dc-event-category-pill.result { color: #8D9D76; background: #F1F5E9; }
+.dc-event-category-pill.other { color: #9292A5; background: #F1F1F5; }
+.dc-home-empty-dday { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; margin-top: 14px; padding: 17px 18px; border: 1px dashed #DDD9EB; border-radius: 14px; background: #FCFBFF; }
+.dc-home-empty-dday strong { color: #5F607D; font-size: 14px; }
+.dc-home-empty-dday span { color: #9693A9; font-size: 11px; }
+.dc-home-empty-dday button { display: inline-flex; align-items: center; gap: 5px; margin-top: 3px; padding: 7px 10px; border: 0; border-radius: 9px; color: #fff; background: #9297BE; font-size: 10px; font-weight: 800; }
+.dc-home-calendar-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 15px; margin-top: 16px; }
+.dc-mini-calendar, .dc-upcoming-widget { min-width: 0; padding: 19px 20px; }
+.dc-calendar-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 13px; }
+.dc-calendar-panel-heading > div { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.dc-calendar-heading-icon { display: grid; place-items: center; width: 36px; height: 36px; flex: 0 0 36px; border-radius: 11px; color: #8C91B9; background: #F0F0F9; }
+.dc-calendar-panel-heading .eyebrow { display: block; margin-bottom: 2px; }
+.dc-calendar-panel-heading h3 { margin: 0; color: #555873; font-size: 14px; }
+.dc-calendar-panel-heading > button { display: inline-flex; align-items: center; gap: 2px; padding: 6px 0 6px 8px; border: 0; color: #858BB3; background: transparent; font-size: 10px; font-weight: 800; white-space: nowrap; }
+.dc-mini-month-controls { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 2px 0 8px; }
+.dc-mini-month-controls strong { min-width: 110px; color: #666986; font-size: 12px; text-align: center; }
+.dc-mini-month-controls button { display: grid; place-items: center; width: 25px; height: 25px; border: 1px solid #ECEAF3; border-radius: 8px; color: #9295B7; background: #fff; }
+.dc-mini-calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+.dc-weekday-row { margin-bottom: 4px; }
+.dc-weekday-row span { padding: 4px 0; color: #A09EB3; font-size: 9px; text-align: center; }
+.dc-mini-day { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px; min-height: 27px; padding: 2px; border: 0; border-radius: 8px; color: #6B6D89; background: transparent; font-size: 10px; }
+.dc-mini-day:hover { background: #F3F1FA; }
+.dc-mini-day.outside { color: #C6C4D2; }
+.dc-mini-day.today span { display: grid; place-items: center; width: 21px; height: 21px; border-radius: 50%; color: #fff; background: #999AC6; }
+.dc-mini-day-dot { display: block; width: 4px; height: 4px; border-radius: 50%; background: #A3A3C8; }
+.dc-mini-day-dot.mock, .dc-admission-day-events i.mock, .dc-event-dot.mock { background: #9AAEDC; }
+.dc-mini-day-dot.csat, .dc-admission-day-events i.csat, .dc-event-dot.csat { background: #B9A0E2; }
+.dc-mini-day-dot.essay, .dc-admission-day-events i.essay, .dc-event-dot.essay { background: #91CDBD; }
+.dc-mini-day-dot.interview, .dc-admission-day-events i.interview, .dc-event-dot.interview { background: #F1B98F; }
+.dc-mini-day-dot.application, .dc-admission-day-events i.application, .dc-event-dot.application { background: #E99BB9; }
+.dc-mini-day-dot.result, .dc-admission-day-events i.result, .dc-event-dot.result { background: #B6C58D; }
+.dc-mini-day-dot.other, .dc-admission-day-events i.other, .dc-event-dot.other { background: #AEB0BD; }
+.dc-mini-calendar-hint { margin: 8px 0 0; color: #AAA8B8; font-size: 9px; text-align: center; }
+.dc-upcoming-list { display: grid; }
+.dc-upcoming-row { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 11px 2px; border: 0; border-top: 1px solid #F1EFF5; background: transparent; text-align: left; }
+.dc-upcoming-row:hover .dc-upcoming-main strong { color: #8589B7; }
+.dc-event-dot { display: block; flex: 0 0 8px; width: 8px; height: 8px; border-radius: 50%; background: #AEB0BD; }
+.dc-upcoming-main { display: flex; flex: 1; flex-direction: column; gap: 4px; min-width: 0; }
+.dc-upcoming-main strong { overflow: hidden; color: #5D607D; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.dc-upcoming-main small { overflow: hidden; color: #A09EAF; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.dc-upcoming-dday { flex: 0 0 auto; padding: 5px 8px; border-radius: 8px; color: #8589B7; background: #F0EFF8; font-size: 9px; font-weight: 850; }
+.dc-upcoming-dday.essay { color: #659D91; background: #ECF6F2; }
+.dc-upcoming-dday.interview { color: #B98569; background: #FCF1E9; }
+.dc-upcoming-dday.application { color: #BC7896; background: #FBEFF4; }
+.dc-upcoming-add-button { display: inline-flex; align-items: center; gap: 5px; margin-top: 7px; padding: 7px 10px; border: 1px solid #E9E7F1; border-radius: 9px; color: #858BB5; background: #FBFAFE; font-size: 10px; font-weight: 800; }
+.dc-calendar-empty-state { display: flex; align-items: center; flex-direction: column; justify-content: center; min-height: 155px; color: #B0AEC2; text-align: center; }
+.dc-calendar-empty-state p { margin: 7px 0 3px; color: #777995; font-size: 12px; font-weight: 700; }
+.dc-calendar-empty-state span { color: #A5A3B3; font-size: 10px; }
+.dc-home-page .lower-grid { margin-top: 16px; }
+
+
+
+.dc-clear-goal-button { justify-self: start; padding: 7px 10px; border: 1px solid #E9E6F0; border-radius: 8px; color: #8B88A5; background: #FAF9FD; font-size: 10px; font-weight: 750; }
+.dc-clear-goal-button:hover { background: #F1EFF8; }
+
+@media (max-width: 1050px) {
+  .dc-home-welcome-row { grid-template-columns: 1fr; }
+  .dc-home-target-card { max-width: 100%; }
+}
+@media (max-width: 850px) {
+  .dc-home-welcome-row { min-height: unset; padding: 18px; }
+  .dc-home-calendar-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .dc-home-welcome-copy h1 { font-size: 22px; }
+  .dc-home-target-card { align-items: flex-start; flex-wrap: wrap; }
+  .dc-home-target-action { margin-left: 58px; }
+  .dc-home-nearest-event { align-items: flex-start; flex-direction: column; gap: 12px; }
+  .dc-home-nearest-copy { padding-left: 0; border-left: 0; }
+  .dc-home-dday-number { font-size: 42px; }
+}

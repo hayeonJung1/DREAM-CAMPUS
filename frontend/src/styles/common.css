@@ -1,0 +1,15 @@
+
+
+
+* { box-sizing: border-box; }
+
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+
+button, input { font: inherit; }
+
+button { cursor: pointer; }
+
+button:focus-visible, input:focus-visible { outline: 3px solid #c98da0; outline-offset: 2px; }
+
+
+

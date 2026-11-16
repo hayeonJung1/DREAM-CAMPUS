@@ -1,0 +1,183 @@
+/* =========================================
+   DREAM CAMPUS: soft pastel palette + controls
+   Preserve the existing page layout and feature structure.
+========================================= */
+:root {
+  --wine: #8B8FB8;
+  --wine-dark: #737BA7;
+  --wine-soft: #F0F0F8;
+  --muted: #85899B;
+  --line: #E8E8F0;
+  --surface: #FFFEFD;
+}
+
+.app-shell { background: #FAF9FC; }
+.sidebar {
+  position: relative;
+  background: #FFFEFD;
+  border-right-color: #EAE9F1;
+}
+.brand-mark {
+  background: linear-gradient(145deg, #AAA6D3, #8FA9C8);
+  box-shadow: 0 8px 18px rgba(137, 145, 184, .18);
+}
+.brand-name { color: #656C91; }
+.brand-caption { color: #9296B2; }
+.sidebar-label { color: #A5A4BE; }
+.nav-item { color: #777A90; }
+.nav-item:hover { background: #F2F1FA; color: #777DA8; }
+.nav-item.active { background: #EFEEF8; color: #777DA8; }
+.nav-item.active::before { background: #9B9AC8; }
+.active-dot { background: #A7A5D0; }
+.sidebar-campus-icon { color: #8799B7; background: #EDF1F8; }
+.sidebar-bottom p { color: #6F7694; }
+.sidebar-bottom p span { color: #9A9ABF; }
+.sidebar-bottom, .brand-lockup { border-color: #EFEEF4; }
+.topbar { background: rgba(255, 254, 253, .9); border-bottom-color: #ECEBF2; }
+.search-wrap { border-color: #E8E7F0; color: #9294B0; }
+.search-results { border-color: #E8E7F0; }
+.search-results button:hover { background: #F3F2FA; color: #777DA8; }
+.icon-button { color: #7F86A7; border-color: #EAE9F1; }
+.profile-button { background: #9296BC; }
+.notification-button i { background: #D7A5AE; }
+
+/* Home hero: same illustration and placement, with a school-neutral pastel palette. */
+.hero-card {
+  background: linear-gradient(112deg, #F0EEF8 0%, #F8F1F0 48%, #E9F1F2 100%);
+  box-shadow: 0 10px 30px rgba(96, 104, 143, .07);
+}
+.hero-card::after {
+  background: linear-gradient(90deg, #F0EEF8 0%, rgba(244, 239, 247, .72) 40%, rgba(226, 238, 239, .48) 100%);
+}
+.hero-kicker { color: #8589B4; }
+.hero-copy h1 { color: #454761; }
+.hero-copy h1 em { color: #8E91BD; }
+.hero-copy p { color: #777A91; }
+.primary-button { background: #9295BC; box-shadow: 0 7px 16px rgba(137, 141, 185, .2); }
+.primary-button:hover { background: #7F84AF; }
+.hero-visual { background: linear-gradient(145deg, #DCE8F0 0%, #F0E8F0 48%, #DDEBE6 100%); }
+.hero-visual::before { background: radial-gradient(ellipse at 72% 18%, rgba(255, 248, 222, .78) 0%, transparent 34%), linear-gradient(180deg, transparent 63%, rgba(134, 157, 158, .22) 100%); }
+.sun-glow { background: rgba(255, 244, 215, .7); }
+.campus-ground { background: linear-gradient(180deg, rgba(161, 190, 178, .72), #9DB5AE); }
+.campus-building { background: linear-gradient(90deg, #AEBBD0, #F0E9E4 18%, #D5D8E6 80%, #A6B4C8); border-color: #9BAAC0; }
+.campus-building::before { background: #A4AEC6; }
+.campus-building span { background: repeating-linear-gradient(90deg, transparent 0 15px, #9AAAC0 15px 18px), repeating-linear-gradient(0deg, transparent 0 25px, #9AAAC0 25px 28px); }
+.building-front { background: linear-gradient(90deg, #A6B7CB, #E8E6E8 30%, #B8C5D3); }
+.building-front::after { border-color: #9BAEC1; background: #8FA3B5; }
+.hero-leaf { color: rgba(255, 255, 255, .88); text-shadow: 0 2px 4px rgba(105, 126, 144, .2); }
+.dream-university-card { border-color: rgba(255,255,255,.85); background: rgba(255, 254, 252, .91); box-shadow: 0 14px 32px rgba(77, 91, 119, .12); }
+.mini-card-label { color: #8F91B1; }
+.campus-seal { color: #6F789A; background: #E9EDF6; border-color: #F8F8FC; }
+.university-identity strong { color: #626D8D; }
+.university-identity small { color: #9699B0; }
+.mini-card-note { border-top-color: #EBEAF1; color: #8A8FB0; }
+
+/* Keep the four shortcuts distinct, each with a soft pastel accent. */
+.quick-card.wine { background: #F1EFF9; border-color: #E6E3F3; color: #8E8DBB; }
+.quick-card.sage { background: #EEF5F0; border-color: #E0EBE2; color: #789A87; }
+.quick-card.blue { background: #EEF3F9; border-color: #E0E8F2; color: #7E9BB8; }
+.quick-card.pink { background: #FBF0EE; border-color: #F2E3E0; color: #C08F91; }
+.quick-card strong { color: #4F506B; }
+.quick-card p { color: #89899C; }
+.quick-arrow { background: rgba(255,255,255,.78); }
+.section-heading h2 { color: #555873; }
+.heading-star { color: #9695BF; }
+.section-heading p, .section-count { color: #A0A0B3; }
+.panel { border-color: #ECEAF1; box-shadow: 0 5px 18px rgba(85, 87, 123, .045); background: #FFFEFD; }
+.playlist-panel { background: linear-gradient(110deg, #F1EDF7, #F8F1F0 68%, #EDF3F2); }
+.playlist-art { color: #888BB5; }
+.text-button { color: #8589B5; }
+.play-circle { background: #9A9BC1; box-shadow: 0 5px 12px rgba(145, 146, 190, .22); }
+.panel-icon { color: #878BB8; background: #F0EFF8; }
+.goal-university strong { color: #646D91; }
+.goal-campus-icon { color: #8796B4; background: #EEF1F7; }
+.panel-link { color: #8589B0; border-top-color: #EEEAF1; }
+.panel-heading > div { color: #8C91B8; }
+.panel-heading h3 { color: #565772; }
+.date-chip { background: #A0A4C5; }
+.date-chip.pale { background: #E8EAF3; color: #7982A5; }
+.dday-chip { color: #7E84AC; background: #F0EFF8; }
+.schedule-tag { color: #82988B; background: #EEF4EF; }
+.data-notice { color: #A2A2B2; }
+.study-summary-main strong { color: #565975; }
+.summary-ring { border-color: #ECECF5; color: #8589AC; }
+.goal-progress-label b { color: #7783A1; }
+.progress-track { background: #EEF0F6; }
+.progress-track span { background: #9A9DC2; }
+.page-footer { color: #9294B6; }
+.page-footer span { color: #AAA9B9; }
+
+/* Soft neutral accent on the future student card regardless of target university. */
+.dc-student-card { box-shadow: 0 13px 28px rgba(91, 103, 133, .09); }
+.dc-student-photo { background: #F0F2F7; }
+.dc-profile-notice { color: #688A79; background: #F0F6F1; }
+
+/* Desktop sidebar fold/unfold button. */
+.sidebar-collapse-toggle {
+  position: absolute;
+  z-index: 12;
+  top: 35px;
+  right: -13px;
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  border: 1px solid #E5E5EF;
+  border-radius: 50%;
+  color: #777FA5;
+  background: #FFFEFD;
+  box-shadow: 0 3px 9px rgba(75, 82, 118, .10);
+}
+.sidebar-collapse-toggle:hover { background: #F1F0F8; }
+.app-shell.sidebar-collapsed .sidebar { width: 82px; padding-left: 13px; padding-right: 13px; }
+.app-shell.sidebar-collapsed .brand-lockup { justify-content: center; padding: 2px 0 27px; }
+.app-shell.sidebar-collapsed .brand-lockup > div:nth-child(2),
+.app-shell.sidebar-collapsed .sidebar-label,
+.app-shell.sidebar-collapsed .nav-item > span:not(.active-dot),
+.app-shell.sidebar-collapsed .sidebar-bottom p,
+.app-shell.sidebar-collapsed .sidebar-foot { display: none; }
+.app-shell.sidebar-collapsed .nav-item { justify-content: center; gap: 0; padding: 0; }
+.app-shell.sidebar-collapsed .active-dot { position: absolute; top: 7px; right: 7px; margin: 0; }
+.app-shell.sidebar-collapsed .sidebar-bottom { display: flex; justify-content: center; padding: 18px 0 0; }
+.app-shell.sidebar-collapsed .sidebar-campus-icon { margin: 0; }
+
+/* Editable D-Day title and date fields. */
+.dc-widget-icon.lavender { color: #8589B7; background: #F0EFF8; }
+.dc-dday-main strong { color: #898DBB; }
+.dc-dday-edit-grid { display: grid; gap: 9px; margin-top: 8px; }
+.dc-dday-edit-grid .dc-date-field { align-items: center; }
+.dc-dday-title-field input { flex: 1; width: 58%; max-width: 230px; min-width: 0; }
+.dc-date-field input { border-color: #E6E5EF; color: #666F91; background: #FFFEFD; }
+.dc-widget-note { color: #9999AC; }
+.dc-goal-progress { background: #EDF2EF; }
+.dc-goal-progress span { background: linear-gradient(90deg, #91B5A1, #B4CDBB); }
+.dc-goal-form input { border-color: #E7E7EF; background: #FFFEFD; }
+.dc-goal-form input:focus { border-color: #A9C2B2; box-shadow: 0 0 0 3px rgba(145, 181, 161, .15); }
+.dc-goal-form button { background: #89AA96; }
+.dc-goal-list li { background: #F8FAF8; }
+.dc-goal-list li > button:hover { color: #8589B7; background: #F0EFF8; }
+.dc-goals-footer strong { color: #789A87; }
+.dc-save-profile-button, .dc-print-button { background: #9297BC; }
+.dc-save-profile-button:hover { background: #7E85AE; }
+.dc-card-style-label { color: #7D84AA; background: #F0F0F8; }
+
+@media (max-width: 850px) {
+  .sidebar-collapse-toggle { display: none; }
+  .app-shell.sidebar-collapsed .sidebar { width: 244px; padding: 28px 18px 20px; }
+  .app-shell.sidebar-collapsed .brand-lockup { justify-content: flex-start; padding: 2px 10px 27px; }
+  .app-shell.sidebar-collapsed .brand-lockup > div:nth-child(2),
+  .app-shell.sidebar-collapsed .sidebar-label,
+  .app-shell.sidebar-collapsed .nav-item > span:not(.active-dot),
+  .app-shell.sidebar-collapsed .sidebar-bottom p,
+  .app-shell.sidebar-collapsed .sidebar-foot { display: revert; }
+  .app-shell.sidebar-collapsed .nav-item { justify-content: flex-start; gap: 12px; padding: 0 13px; }
+  .app-shell.sidebar-collapsed .active-dot { position: static; margin-left: auto; }
+  .app-shell.sidebar-collapsed .sidebar-bottom { display: block; padding: 22px 12px 0; }
+  .app-shell.sidebar-collapsed .sidebar-campus-icon { margin: 0 0 9px; }
+}
+@media (max-width: 560px) {
+  .dc-dday-title-field input { max-width: 62%; }
+}
+
+
