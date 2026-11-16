@@ -946,84 +946,18 @@ button:focus-visible, input:focus-visible { outline: 3px solid #c98da0; outline-
 .dc-calendar-empty-state span { color: #A5A3B3; font-size: 10px; }
 .dc-home-page .lower-grid { margin-top: 16px; }
 
-/* Full admission calendar page */
-.dc-admission-hero { position: relative; padding-right: 180px; }
-.dc-admission-add-main { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 42px; margin-left: auto; padding: 0 14px; border: 0; border-radius: 11px; color: #fff; background: linear-gradient(135deg, #A5A2CC, #91A9C8); font-size: 11px; font-weight: 800; white-space: nowrap; }
-.dc-admission-layout { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); align-items: start; gap: 16px; }
-.dc-admission-calendar-panel, .dc-event-form-panel, .dc-selected-day-panel, .dc-admission-upcoming-panel { min-width: 0; padding: 21px; }
-.dc-admission-month-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
-.dc-admission-month-heading h2 { margin: 4px 0 0; color: #565875; font-size: 22px; letter-spacing: -.5px; }
-.dc-admission-month-actions { display: flex; align-items: center; gap: 6px; }
-.dc-admission-month-actions button { display: grid; place-items: center; min-width: 34px; height: 34px; border: 1px solid #EAE8F1; border-radius: 9px; color: #858BB6; background: #fff; }
-.dc-admission-month-actions .dc-today-button { min-width: 48px; padding: 0 10px; color: #7C82AB; background: #F4F3FA; font-size: 10px; font-weight: 800; }
-.dc-admission-calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-.dc-admission-weekdays { padding-bottom: 8px; border-bottom: 1px solid #F0EEF5; }
-.dc-admission-weekdays span { color: #9695AD; font-size: 10px; font-weight: 750; text-align: center; }
-.dc-admission-days { padding-top: 5px; }
-.dc-admission-day { display: flex; align-items: center; flex-direction: column; justify-content: flex-start; gap: 4px; min-height: 75px; margin: 2px; padding: 8px 3px 4px; border: 1px solid transparent; border-radius: 11px; color: #626683; background: transparent; }
-.dc-admission-day:hover { border-color: #E5E2F1; background: #FAF9FE; }
-.dc-admission-day.outside { color: #C7C5D2; }
-.dc-admission-day.selected { border-color: #DCD9EF; color: #6D70A1; background: #F3F1FB; }
-.dc-admission-day.today .dc-admission-day-number { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 50%; color: #fff; background: #9699C2; }
-.dc-admission-day-number { display: grid; place-items: center; min-width: 25px; height: 25px; font-size: 11px; font-weight: 750; }
-.dc-admission-day-events { display: flex; align-items: center; justify-content: center; gap: 3px; min-height: 5px; }
-.dc-admission-day-events i { display: block; width: 5px; height: 5px; border-radius: 50%; background: #B9ACD9; }
-.dc-admission-day small { color: #A3A1B5; font-size: 8px; }
-.dc-admission-legend { display: flex; flex-wrap: wrap; gap: 10px 13px; margin-top: 14px; padding-top: 13px; border-top: 1px solid #F0EEF5; }
-.dc-admission-legend span { display: inline-flex; align-items: center; gap: 5px; color: #9694A9; font-size: 9px; }
-.dc-admission-legend i { display: block; width: 7px; height: 7px; border-radius: 50%; background: #B0B0C6; }
-.dc-admission-legend i.mock { background: #9AAEDC; } .dc-admission-legend i.csat { background: #B9A0E2; } .dc-admission-legend i.essay { background: #91CDBD; } .dc-admission-legend i.interview { background: #F1B98F; } .dc-admission-legend i.application { background: #E99BB9; } .dc-admission-legend i.result { background: #B6C58D; }
-.dc-admission-side-column { display: grid; gap: 14px; }
-.dc-event-form-heading, .dc-selected-day-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-.dc-event-form-heading h2, .dc-selected-day-heading h2 { margin: 4px 0 0; color: #565875; font-size: 17px; }
-.dc-event-form-heading > button { display: grid; place-items: center; width: 30px; height: 30px; border: 0; border-radius: 8px; color: #9693AE; background: #F5F4FA; }
-.dc-event-form { display: grid; gap: 12px; }
-.dc-event-form > label { display: grid; gap: 6px; color: #777891; font-size: 10px; font-weight: 800; }
-.dc-event-form input, .dc-event-form select { width: 100%; min-height: 41px; padding: 0 11px; border: 1px solid #E8E6F0; border-radius: 9px; outline: none; color: #5E607D; background: #FFFEFF; font: inherit; font-size: 11px; }
-.dc-event-form input:focus, .dc-event-form select:focus { border-color: #A7A4CC; box-shadow: 0 0 0 3px rgba(167,164,204,.14); }
-.dc-event-form-notice { margin: 0; color: #A56E7F; font-size: 10px; }
-.dc-event-form-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 5px; }
-.dc-event-form-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 36px; padding: 0 10px; border-radius: 9px; font-size: 10px; font-weight: 800; }
-.dc-event-cancel-button { border: 1px solid #EAE8F0; color: #8889A1; background: #fff; }
-.dc-event-delete-button { border: 1px solid #F1DFE2; color: #B77D89; background: #FFF7F8; }
-.dc-event-save-button { margin-left: auto; border: 0; color: #fff; background: #9297BE; }
-.dc-selected-day-heading > div > .eyebrow { display: block; }
-.dc-selected-day-heading > span { color: #A4A2B6; font-size: 10px; }
-.dc-selected-day-heading > button { display: inline-flex; align-items: center; gap: 3px; padding: 7px 9px; border: 1px solid #EAE8F1; border-radius: 8px; color: #858BB5; background: #FAF9FE; font-size: 10px; font-weight: 800; }
-.dc-selected-events-list { display: grid; gap: 4px; }
-.dc-selected-event-row { display: flex; align-items: center; gap: 9px; padding: 11px 0; border-top: 1px solid #F1EFF5; }
-.dc-selected-event-row > div { display: flex; flex: 1; flex-direction: column; gap: 4px; min-width: 0; }
-.dc-selected-event-row strong { overflow-wrap: anywhere; color: #5D607D; font-size: 11px; }
-.dc-selected-event-row small { color: #A09EAF; font-size: 9px; }
-.dc-selected-event-row > button { display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid #EBE9F2; border-radius: 8px; color: #9295B8; background: #fff; }
-.dc-selected-day-empty { display: flex; align-items: center; flex-direction: column; justify-content: center; min-height: 135px; color: #B0AEC1; text-align: center; }
-.dc-selected-day-empty p { margin: 8px 0 4px; color: #777995; font-size: 11px; font-weight: 750; }
-.dc-selected-day-empty span { color: #A6A4B6; font-size: 9px; }
-.dc-selected-day-add { display: inline-flex; align-items: center; gap: 5px; margin-top: 12px; padding: 8px 10px; border: 0; border-radius: 9px; color: #fff; background: #9297BE; font-size: 10px; font-weight: 800; }
-.dc-admission-upcoming-panel .dc-selected-day-heading { margin-bottom: 8px; }
-.dc-selected-events-list.compact { gap: 0; }
-.dc-upcoming-compact-row { display: flex; align-items: center; gap: 8px; width: 100%; padding: 9px 0; border: 0; border-top: 1px solid #F1EFF5; background: transparent; text-align: left; }
-.dc-upcoming-compact-row > span:nth-child(2) { display: flex; flex: 1; flex-direction: column; gap: 3px; min-width: 0; }
-.dc-upcoming-compact-row strong { overflow: hidden; color: #5E607C; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
-.dc-upcoming-compact-row small { overflow: hidden; color: #A09EAF; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
-.dc-upcoming-compact-row b { color: #858AB4; font-size: 9px; white-space: nowrap; }
-.dc-no-upcoming { margin: 0; padding: 15px 0 3px; color: #A09EAF; font-size: 10px; line-height: 1.6; }
-.dc-calendar-page-notice { margin: 12px 0; color: #6E947D; font-size: 11px; }
-.dc-calendar-data-note { margin: 13px 2px 0; color: #A6A4B4; font-size: 10px; line-height: 1.6; }
+
+
 .dc-clear-goal-button { justify-self: start; padding: 7px 10px; border: 1px solid #E9E6F0; border-radius: 8px; color: #8B88A5; background: #FAF9FD; font-size: 10px; font-weight: 750; }
 .dc-clear-goal-button:hover { background: #F1EFF8; }
 
 @media (max-width: 1050px) {
   .dc-home-welcome-row { grid-template-columns: 1fr; }
   .dc-home-target-card { max-width: 100%; }
-  .dc-admission-layout { grid-template-columns: 1fr; }
-  .dc-admission-side-column { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
 }
 @media (max-width: 850px) {
   .dc-home-welcome-row { min-height: unset; padding: 18px; }
   .dc-home-calendar-grid { grid-template-columns: 1fr; }
-  .dc-admission-hero { padding-right: 20px; flex-wrap: wrap; }
-  .dc-admission-add-main { margin-left: 75px; }
 }
 @media (max-width: 600px) {
   .dc-home-welcome-copy h1 { font-size: 22px; }
@@ -1032,12 +966,4 @@ button:focus-visible, input:focus-visible { outline: 3px solid #c98da0; outline-
   .dc-home-nearest-event { align-items: flex-start; flex-direction: column; gap: 12px; }
   .dc-home-nearest-copy { padding-left: 0; border-left: 0; }
   .dc-home-dday-number { font-size: 42px; }
-  .dc-admission-side-column { grid-template-columns: 1fr; }
-  .dc-admission-calendar-panel { padding: 15px 10px; }
-  .dc-admission-day { min-height: 57px; margin: 1px; padding-top: 5px; }
-  .dc-admission-day-number { font-size: 10px; }
-  .dc-admission-month-heading h2 { font-size: 19px; }
-  .dc-admission-legend { gap: 8px; }
-  .dc-admission-legend span { font-size: 8px; }
-  .dc-admission-add-main { margin-left: 0; }
 }
