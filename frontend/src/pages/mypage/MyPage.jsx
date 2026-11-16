@@ -9,6 +9,8 @@ import {
 import { getLocalDateKey, getDdayInfo, getDateLabel, getUpcomingAdmissionEvents, getEventCategoryClass, getCalendarGridDays, CALENDAR_WEEKDAYS, isValidDateKey, ADMISSION_EVENT_CATEGORIES, sortAdmissionEvents, getUniversityTheme, resizeImageFile } from '../../utils/appUtils.js';
 import StudentIdCard from '../../components/common/StudentIdCard.jsx';
 
+import './MyPage.css';
+
 export default function MyPage({ profile, onProfileChange }) {
   const [notice, setNotice] = useState('');
   const [photoLoading, setPhotoLoading] = useState(false);

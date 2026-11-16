@@ -3,11 +3,11 @@ import {
   CalendarDays, Clock3, FileText, Gamepad2, GraduationCap, Headphones, House, Landmark,
   Music2, UserRound,
 } from 'lucide-react';
-import HomePage from './pages/Home.jsx';
-import MockExamPage from './pages/exam/MockExamPage.jsx';
-import MyPage from './pages/mypage/MyPage.jsx';
-import AdmissionCalendarPage from './pages/calendar/Calendar.jsx';
-import ArcadePage from './pages/arcade/ArcadePage.jsx';
+import HomePage from './pages/Home/HomePage.jsx';
+import MockExamPage from './pages/Exam/MockExamPage.jsx';
+import MyPage from './pages/MyPage/MyPage.jsx';
+import AdmissionCalendarPage from './pages/Calendar/CalendarPage.jsx';
+import ArcadePage from './pages/Arcade/ArcadePage.jsx';
 import PlaceholderPage from './pages/placeholder/PlaceholderPage.jsx';
 import MainLayout from './layouts/MainLayout.jsx';
 import { createDefaultProfile, normalizeProfile, usePersistentState, getLocalDateKey, createInitialAdmissionEvents, normalizeAdmissionEvents } from './utils/appUtils.js';

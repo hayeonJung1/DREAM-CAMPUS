@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { getLocalDateKey, getDdayInfo, getDateLabel, getUpcomingAdmissionEvents, getEventCategoryClass, getCalendarGridDays, CALENDAR_WEEKDAYS, isValidDateKey, ADMISSION_EVENT_CATEGORIES, sortAdmissionEvents, getUniversityTheme, resizeImageFile } from '../../utils/appUtils.js';
 
+import './CalendarPage.css';
+
 export default function AdmissionCalendarPage({ events, onEventsChange, initialDate }) {
   const [visibleMonth, setVisibleMonth] = useState(() => {
     const date = isValidDateKey(initialDate) ? new Date(`${initialDate}T00:00:00`) : new Date();

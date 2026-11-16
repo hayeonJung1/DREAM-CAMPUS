@@ -7,7 +7,7 @@ import {
   UserRound, X,
 } from 'lucide-react';
 import { getRegisteredAnswerKey } from '../../data/answerKeys.js';
-import '../../styles/exam.css';
+import './MockExamPage.css';
 
 export default function MockExamPage() {
   // 고3 전용 모의고사 선택 및 OMR 답안 입력 화면

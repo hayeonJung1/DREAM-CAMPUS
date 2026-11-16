@@ -6,8 +6,10 @@ import {
   Pencil, Plus, Trash2, Search, Settings2, Sparkles, Target, Trophy,
   UserRound, X,
 } from 'lucide-react';
-import { getLocalDateKey, getDdayInfo, getDateLabel, getUpcomingAdmissionEvents, getEventCategoryClass, getCalendarGridDays, CALENDAR_WEEKDAYS, isValidDateKey, ADMISSION_EVENT_CATEGORIES, sortAdmissionEvents, getUniversityTheme, resizeImageFile } from '../utils/appUtils.js';
-import MiniAdmissionCalendar from '../components/dashboard/MiniAdmissionCalendar.jsx';
+import { getLocalDateKey, getDdayInfo, getDateLabel, getUpcomingAdmissionEvents, getEventCategoryClass, getCalendarGridDays, CALENDAR_WEEKDAYS, isValidDateKey, ADMISSION_EVENT_CATEGORIES, sortAdmissionEvents, getUniversityTheme, resizeImageFile } from '../../utils/appUtils.js';
+import MiniAdmissionCalendar from '../../components/dashboard/MiniAdmissionCalendar.jsx';
+
+import './HomePage.css';
 
 export default function HomePage({ onNavigate, onOpenCalendar, profile, dailyGoals, onAddGoal, onToggleGoal, onRemoveGoal, admissionEvents, quickMenus }) {
   const [goalDraft, setGoalDraft] = useState('');

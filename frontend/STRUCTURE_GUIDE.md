@@ -24,3 +24,7 @@
 
 ## 실행
 프론트엔드 폴더에서 `npm install` 후 `npm run dev`를 실행하세요.
+
+
+## 페이지별 CSS 관리 원칙
+각 화면에서만 사용하는 CSS는 해당 페이지 폴더에 JSX와 함께 둡니다. 예: `pages/Exam/MockExamPage.jsx`와 `pages/Exam/MockExamPage.css`. 공통 레이아웃·전역 스타일 및 여러 화면에서 공유하는 위젯 스타일만 `styles/`에 둡니다. 컴포넌트 전용 CSS는 컴포넌트 파일 옆에 둡니다.
