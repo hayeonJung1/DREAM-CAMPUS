@@ -1,0 +1,35 @@
+
+.dc-arcade-page { padding-bottom: 42px; }
+.dc-arcade-hero { background: linear-gradient(110deg, #F7F4FB 0%, #FDF5F3 100%); }
+.dc-arcade-hero .subpage-icon { color: #8277A7; background: #FFFFFF; }
+.dc-arcade-hero .eyebrow { color: #9185B2; }
+.dc-arcade-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 27px 0 14px; }
+.dc-arcade-section-heading h2 { margin: 5px 0 0; color: #433B4D; font-size: 19px; letter-spacing: -.5px; }
+.dc-arcade-section-note { color: #A39AA8; font-size: 11px; }
+.dc-arcade-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.dc-arcade-feature-card { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-height: 190px; padding: 18px; border: 1px solid #ECE8EF; border-radius: 17px; background: #FFFFFF; color: #453E4B; text-align: left; box-shadow: 0 5px 18px rgba(55, 43, 62, .035); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.dc-arcade-feature-card.is-available { cursor: pointer; }
+.dc-arcade-feature-card.is-available:hover { transform: translateY(-3px); border-color: #D8CFE8; box-shadow: 0 11px 24px rgba(55, 43, 62, .08); }
+.dc-arcade-feature-card.is-coming { opacity: .72; cursor: not-allowed; }
+.dc-arcade-card-topline { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 3px; }
+.dc-arcade-emoji { display: grid; place-items: center; width: 50px; height: 50px; border-radius: 15px; background: rgba(255,255,255,.82); font-size: 27px; }
+.dc-arcade-status { padding: 5px 8px; border-radius: 999px; color: #928C96; background: #F4F2F4; font-size: 9px; font-weight: 800; white-space: nowrap; }
+.dc-arcade-status.ready { color: #657F6D; background: #EEF5EF; }
+.dc-arcade-feature-card > strong { color: #403847; font-size: 15px; letter-spacing: -.3px; }
+.dc-arcade-card-description { min-height: 34px; color: #8F8792; font-size: 11px; line-height: 1.6; }
+.dc-arcade-card-action { display: inline-flex; align-items: center; gap: 5px; margin-top: auto; color: #8173A4; font-size: 11px; font-weight: 800; }
+.tone-peach { background: linear-gradient(145deg, #FFF9F5, #FFFFFF 70%); border-color: #F2E8E0; }
+.tone-peach .dc-arcade-emoji { background: #FFF0E5; }
+.tone-pink .dc-arcade-emoji { background: #FBEFF5; }
+.tone-lavender .dc-arcade-emoji { background: #F1EDFA; }
+.tone-blue .dc-arcade-emoji { background: #EDF3FB; }
+.tone-mint .dc-arcade-emoji { background: #ECF6F0; }
+.tone-cream .dc-arcade-emoji { background: #FAF4E8; }
+.tone-student .dc-arcade-emoji { background: #F0F3FA; }
+.tone-student .dc-arcade-card-action { color: #6D83A5; }
+.dc-arcade-note { margin: 17px 2px 0; color: #A59CA6; font-size: 10px; }
+.dc-arcade-game-page { padding-top: 18px; }
+.dc-arcade-back-button { display: inline-flex; align-items: center; gap: 5px; margin: 0 0 12px; padding: 8px 11px; border: 1px solid #E9E3EB; border-radius: 10px; color: #766B82; background: #FFFFFF; font: inherit; font-size: 11px; font-weight: 750; cursor: pointer; }
+.dc-arcade-back-button:hover { border-color: #D5CBE2; background: #FBF9FD; }
+@media (max-width: 900px) { .dc-arcade-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .dc-arcade-card-grid { grid-template-columns: 1fr; } .dc-arcade-feature-card { min-height: 164px; } .dc-arcade-section-heading { align-items: flex-start; flex-direction: column; gap: 4px; } }
