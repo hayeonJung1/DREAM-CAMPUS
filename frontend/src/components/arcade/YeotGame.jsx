@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../../styles/yeot-game.css';
+import './YeotGame.css';
 
 const STORAGE_KEY = 'dream-campus-yeot-game-v2';
 const LEGACY_STORAGE_KEY = 'dream-campus-yeot-game-v1';

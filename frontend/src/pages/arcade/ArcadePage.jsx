@@ -7,7 +7,7 @@ import {
   UserRound, X,
 } from 'lucide-react';
 import YeotGame from '../../components/arcade/YeotGame.jsx';
-import '../../styles/arcade-menu.css';
+import './ArcadePage.css';
 
 const ARCADE_MENU_ITEMS = [
   {

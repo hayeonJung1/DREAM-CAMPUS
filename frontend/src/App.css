@@ -1,8 +1,6 @@
-/* DREAM CAMPUS styles entry point. Keep imports in this order. */
+/* Global styles only. Feature-specific styles are imported by their own pages/components. */
 @import './styles/variables.css';
 @import './styles/common.css';
 @import './styles/base.css';
 @import './styles/dashboard.css';
 @import './styles/theme-overrides.css';
-@import './styles/home-overrides.css';
-@import './styles/calendar.css';
