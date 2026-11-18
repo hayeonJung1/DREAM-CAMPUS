@@ -1,11 +1,13 @@
 package com.dreamcampus.backend.study;
 
+import com.dreamcampus.backend.common.exception.ApiException;
 import com.dreamcampus.backend.study.dto.StudySubjectResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +30,53 @@ public class StudySubjectService {
         return repository.findByUserIdAndActiveTrueOrderByIdAsc(userId).stream()
                 .map(StudySubjectResponse::from)
                 .toList();
+    }
+
+
+    @Transactional
+    public StudySubjectResponse create(Long userId, String rawName) {
+        String name = rawName.trim();
+        Optional<StudySubject> existing = repository.findByUserIdAndName(userId, name);
+
+        if (existing.isPresent()) {
+            StudySubject subject = existing.get();
+            if (subject.isActive()) {
+                throw ApiException.conflict("이미 있는 과목입니다.");
+            }
+            subject.activate();   // 숨겨 둔 과목이면 다시 살린다
+            return StudySubjectResponse.from(subject);
+        }
+        return StudySubjectResponse.from(repository.save(StudySubject.create(userId, name)));
+    }
+
+    @Transactional
+    public StudySubjectResponse rename(Long userId, Long subjectId, String rawName) {
+        StudySubject subject = findMine(userId, subjectId);
+        String name = rawName.trim();
+
+        repository.findByUserIdAndName(userId, name)
+                .filter(other -> !other.getId().equals(subjectId))
+                .ifPresent(other -> { throw ApiException.conflict("이미 있는 과목 이름입니다."); });
+
+        subject.rename(name);
+        return StudySubjectResponse.from(subject);
+    }
+
+    @Transactional
+    public void delete(Long userId, Long subjectId) {
+        findMine(userId, subjectId).deactivate();   // 진짜 삭제가 아니라 숨김
+    }
+
+    // 내 과목인지 확인하며 가져온다
+    private StudySubject findMine(Long userId, Long subjectId) {
+        StudySubject subject = repository.findById(subjectId)
+                .orElseThrow(() -> ApiException.notFound("과목을 찾을 수 없습니다."));
+        if (!subject.getUserId().equals(userId)) {
+            throw ApiException.forbidden("내 과목이 아닙니다.");
+        }
+        if (!subject.isActive()) {
+            throw ApiException.notFound("과목을 찾을 수 없습니다.");
+        }
+        return subject;
     }
 }

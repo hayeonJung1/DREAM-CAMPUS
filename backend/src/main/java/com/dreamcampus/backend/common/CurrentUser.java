@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
  * 로그인(JWT/세션)이 구현되면 인증 정보에서 꺼내도록 이 클래스 한 곳만 고친다.
  */
 
+// 빈 등록
 @Component
 public class CurrentUser {
 
