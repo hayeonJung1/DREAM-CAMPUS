@@ -1,21 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  ArrowRight, ArrowUpRight, Bell, BookOpenCheck, CalendarDays, TrendingUp,
-  CheckCircle2, ChevronLeft, ChevronRight, Clock3, FileText, Gamepad2,
-  GraduationCap, Headphones, House, Landmark, ListChecks, Menu, Music2,
-  Pencil, Plus, Trash2, Search, Settings2, Sparkles, Target, Trophy,
-  UserRound, X,
+  ArrowRight,
+  BookOpenCheck,
+  CalendarDays,
+  CheckCircle2,
+  ChevronRight,
+  FileText,
+  GraduationCap,
+  ListChecks,
 } from 'lucide-react';
-import { getRegisteredAnswerKey } from '../../data/answerKeys.js';
 import './MockExamPage.css';
 
 export default function MockExamPage() {
-  // 고3 전용 모의고사 선택 및 OMR 답안 입력 화면
   const [year, setYear] = useState('2027학년도');
   const [month, setMonth] = useState('9월');
   const [koreanOption, setKoreanOption] = useState('');
   const [mathOption, setMathOption] = useState('');
   const [selectedInquiries, setSelectedInquiries] = useState([]);
+
+  const [apiSubjects, setApiSubjects] = useState([]);
+  const [apiLoading, setApiLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
 
   const [view, setView] = useState('selection');
   const [activeSubjectKey, setActiveSubjectKey] = useState(null);
@@ -24,43 +29,124 @@ export default function MockExamPage() {
   const [savedAnswers, setSavedAnswers] = useState({});
   const [gradeResult, setGradeResult] = useState(null);
   const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const years = ['2027학년도', '2026학년도', '2025학년도', '2024학년도'];
-  // 고3 모의평가 및 수능에서 사용하는 대표 시행 월. 실제 회차는 학년도별로 확인해야 함.
   const months = ['3월', '5월', '6월', '7월', '9월', '10월', '11월'];
-  const koreanOptions = ['화법과 작문', '언어와 매체'];
-  const mathOptions = ['확률과 통계', '미적분', '기하'];
-  const socialStudies = [
-    '생활과 윤리', '윤리와 사상', '한국지리', '세계지리', '동아시아사',
-    '세계사', '경제', '정치와 법', '사회·문화',
-  ];
-  const scienceStudies = [
-    '물리학Ⅰ', '화학Ⅰ', '생명과학Ⅰ', '지구과학Ⅰ',
-    '물리학Ⅱ', '화학Ⅱ', '생명과학Ⅱ', '지구과학Ⅱ',
-  ];
+  const examMonth = Number.parseInt(month, 10);
 
-  const selectedExamText = `${year} · 고3 · ${month}`;
+  useEffect(() => {
+    let isActive = true;
+
+    setApiLoading(true);
+    setApiError('');
+    setApiSubjects([]);
+
+    fetch(`/api/exams?academicYear=${encodeURIComponent(year)}&examMonth=${examMonth}`)
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(`과목 조회에 실패했습니다. (${response.status})`);
+        }
+        return response.json();
+      })
+      .then((result) => {
+        if (!isActive) return;
+        if (!result.success) {
+          throw new Error(result.message || '과목 조회에 실패했습니다.');
+        }
+        setApiSubjects(Array.isArray(result.data) ? result.data : []);
+      })
+      .catch((error) => {
+        if (isActive) setApiError(error.message || '과목 조회 중 오류가 발생했습니다.');
+      })
+      .finally(() => {
+        if (isActive) setApiLoading(false);
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [year, examMonth]);
+
+  const yearsInData = apiSubjects;
+  const koreanOptions = yearsInData
+    .filter((subject) => subject.subjectCode.startsWith('KOR_'))
+    .map((subject) => subject.optionName)
+    .filter(Boolean);
+  const mathOptions = yearsInData
+    .filter((subject) => subject.subjectCode.startsWith('MATH_'))
+    .map((subject) => subject.optionName)
+    .filter(Boolean);
+  const socialStudies = yearsInData
+    .filter((subject) => subject.subjectCode.startsWith('SOC_'))
+    .map((subject) => subject.subjectName);
+  const scienceStudies = yearsInData
+    .filter((subject) => subject.subjectCode.startsWith('SCI_'))
+    .map((subject) => subject.subjectName);
+
+  const koreanApiSubject = yearsInData.find(
+    (subject) => subject.subjectCode.startsWith('KOR_') && subject.optionName === koreanOption,
+  );
+  const mathApiSubject = yearsInData.find(
+    (subject) => subject.subjectCode.startsWith('MATH_') && subject.optionName === mathOption,
+  );
+  const englishApiSubject = yearsInData.find((subject) => subject.subjectCode === 'ENGLISH');
+  const historyApiSubject = yearsInData.find((subject) => subject.subjectCode === 'HISTORY');
+
   const activeSubjects = [
-    { key: 'korean', name: '국어', detail: koreanOption, questionCount: 45, type: 'choice', note: '공통 34문항 + 선택 11문항' },
-    { key: 'math', name: '수학', detail: mathOption, questionCount: 30, type: 'math', note: '객관식 21문항 + 단답형 9문항' },
-    { key: 'english', name: '영어', detail: '듣기 17문항 포함', questionCount: 45, type: 'choice', note: '5지선다형 45문항' },
-    { key: 'history', name: '한국사', detail: '필수 응시', questionCount: 20, type: 'choice', note: '5지선다형 20문항' },
-    ...selectedInquiries.map((name, index) => ({
-      key: `inquiry-${name}`,
-      name,
-      detail: '사회·과학탐구',
-      questionCount: 20,
+    koreanApiSubject && {
+      key: 'korean',
+      apiSubject: koreanApiSubject,
+      name: koreanApiSubject.subjectName,
+      detail: koreanApiSubject.optionName,
+      questionCount: koreanApiSubject.questionCount,
       type: 'choice',
-      note: '5지선다형 20문항',
-      order: index + 1,
-    })),
-  ];
+    },
+    mathApiSubject && {
+      key: 'math',
+      apiSubject: mathApiSubject,
+      name: mathApiSubject.subjectName,
+      detail: mathApiSubject.optionName,
+      questionCount: mathApiSubject.questionCount,
+      type: 'math',
+    },
+    englishApiSubject && {
+      key: 'english',
+      apiSubject: englishApiSubject,
+      name: englishApiSubject.subjectName,
+      detail: '듣기 문항 포함',
+      questionCount: englishApiSubject.questionCount,
+      type: 'choice',
+    },
+    historyApiSubject && {
+      key: 'history',
+      apiSubject: historyApiSubject,
+      name: historyApiSubject.subjectName,
+      detail: '필수 응시',
+      questionCount: historyApiSubject.questionCount,
+      type: 'choice',
+    },
+    ...selectedInquiries.map((name, index) => {
+      const apiSubject = yearsInData.find((subject) => subject.subjectName === name);
+      if (!apiSubject) return null;
+      return {
+        key: `inquiry-${name}`,
+        apiSubject,
+        name: apiSubject.subjectName,
+        detail: apiSubject.optionName || '탐구 영역',
+        questionCount: apiSubject.questionCount,
+        type: 'choice',
+        order: index + 1,
+      };
+    }),
+  ].filter(Boolean);
 
   const currentSubject = activeSubjects.find((item) => item.key === activeSubjectKey);
   const answeredCount = currentSubject?.type === 'math'
     ? draftMathAnswers.filter((answer) => answer !== '').length
-    : draftChoiceAnswers.length;
+    : draftChoiceAnswers.split('').filter((answer) => answer !== '0').length;
   const savedCount = activeSubjects.filter((item) => Object.prototype.hasOwnProperty.call(savedAnswers, item.key)).length;
+  const selectedExamText = `${year} · 고3 · ${month}`;
 
   const clearSavedAnswers = () => {
     setSavedAnswers({});
@@ -68,30 +154,53 @@ export default function MockExamPage() {
     setMessage('');
   };
 
+  const handleYearChange = (value) => {
+    setYear(value);
+    setKoreanOption('');
+    setMathOption('');
+    setSelectedInquiries([]);
+    clearSavedAnswers();
+    setView('selection');
+  };
+
+  const handleMonthChange = (value) => {
+    setMonth(value);
+    setKoreanOption('');
+    setMathOption('');
+    setSelectedInquiries([]);
+    clearSavedAnswers();
+    setView('selection');
+  };
+
   const handleInquiryToggle = (name) => {
+    const selectedSubject = yearsInData.find((subject) => subject.subjectName === name);
+    if (selectedSubject?.dataStatus === 'NOT_READY') {
+      setMessage('이 과목은 아직 정답 데이터가 등록되지 않았습니다.');
+      return;
+    }
+
     setSelectedInquiries((previous) => {
       if (previous.includes(name)) {
         return previous.filter((item) => item !== name);
       }
       if (previous.length >= 2) {
-        setMessage('탐구 과목은 사회·과학 17개 중 최대 2개까지 선택할 수 있어.');
+        setMessage('탐구 과목은 최대 2개까지 선택할 수 있습니다.');
         return previous;
       }
       setMessage('');
       return [...previous, name];
     });
-    clearSavedAnswers();
+    setSavedAnswers({});
+    setGradeResult(null);
   };
 
   const handleChoiceAnswerChange = (event) => {
-    const cleaned = event.target.value.replace(/[^1-5]/g, '').slice(0, currentSubject.questionCount);
+    const cleaned = event.target.value.replace(/[^0-5]/g, '').slice(0, currentSubject.questionCount);
     setDraftChoiceAnswers(cleaned);
     setMessage('');
   };
 
   const handleMathAnswerChange = (index, value) => {
-    // 2027학년도 수능 수학: 30문항 중 30%인 9문항이 단답형
-    // 기본 입력 구분은 1~21번 객관식, 22~30번 단답형으로 구성함.
     const cleaned = index < 21
       ? value.replace(/[^1-5]/g, '').slice(0, 1)
       : value.replace(/\D/g, '').slice(0, 4);
@@ -102,6 +211,7 @@ export default function MockExamPage() {
   const openAnswerSheet = (subjectKey) => {
     const target = activeSubjects.find((item) => item.key === subjectKey);
     if (!target) return;
+
     const existing = savedAnswers[subjectKey];
     setActiveSubjectKey(subjectKey);
     if (target.type === 'math') {
@@ -116,62 +226,114 @@ export default function MockExamPage() {
   };
 
   const confirmExamSelection = () => {
-    if (!koreanOption || !mathOption) {
-      setMessage('국어와 수학 선택과목을 각각 하나씩 선택해 줘.');
+    if (apiLoading) {
+      setMessage('과목 정보를 불러오고 있습니다. 잠시 후 다시 선택해 주세요.');
+      return;
+    }
+    if (apiError || apiSubjects.length === 0) {
+      setMessage('선택한 시험의 과목 데이터가 없습니다. 학년도와 시험 월을 확인해 주세요.');
+      return;
+    }
+    if (!koreanOption || !koreanApiSubject || !mathOption || !mathApiSubject) {
+      setMessage('국어와 수학 선택과목을 각각 하나씩 선택해 주세요.');
       return;
     }
     if (selectedInquiries.length < 1 || selectedInquiries.length > 2) {
-      setMessage('사회·과학탐구 17개 과목 중 1~2개를 선택해 줘.');
+      setMessage('사회·과학탐구 과목을 1~2개 선택해 주세요.');
       return;
     }
     clearSavedAnswers();
     setView('subjects');
   };
 
-  const saveCurrentAnswers = () => {
+  const saveCurrentAnswers = async () => {
     if (!currentSubject) return;
-    if (answeredCount !== currentSubject.questionCount) {
-      setMessage(`아직 ${currentSubject.questionCount - answeredCount}문항이 비어 있어. 모든 답안을 입력해 줘.`);
+    if (currentSubject.apiSubject.dataStatus === 'NOT_READY') {
+      setMessage('아직 정답 데이터가 등록되지 않은 과목입니다.');
       return;
     }
 
-    const valueToSave = currentSubject.type === 'math' ? [...draftMathAnswers] : draftChoiceAnswers;
-    setSavedAnswers((previous) => ({ ...previous, [currentSubject.key]: valueToSave }));
+    const values = currentSubject.type === 'math'
+      ? draftMathAnswers
+      : draftChoiceAnswers.split('').map((answer) => (answer === '0' ? '' : answer));
+
+    const answers = Object.fromEntries(
+      values
+        .map((answer, index) => [index + 1, answer.trim()])
+        .filter(([, answer]) => answer !== ''),
+    );
+
+    if (Object.keys(answers).length === 0) {
+      setMessage('채점할 답안을 한 문항 이상 입력해 주세요. 미응답 문항은 비워 두셔도 됩니다.');
+      return;
+    }
+
+    setIsSubmitting(true);
     setMessage('');
 
-    // 현재 정답 등록 범위: 2027학년도 9월 모의평가 고3 국어
-    const answerKey = currentSubject.key === 'korean'
-      ? getRegisteredAnswerKey(year, month, 'korean', koreanOption)
-      : null;
-
-    if (answerKey && typeof valueToSave === 'string') {
-      const submitted = valueToSave.split('');
-      const details = answerKey.map((correctAnswer, index) => ({
-        number: index + 1,
-        submitted: submitted[index],
-        correct: String(correctAnswer),
-        isCorrect: submitted[index] === String(correctAnswer),
-      }));
-      const correctCount = details.filter((item) => item.isCorrect).length;
-      const wrongQuestions = details.filter((item) => !item.isCorrect).map((item) => item.number);
-      setGradeResult({
-        examTitle: `${year} 9월 모의평가`,
-        subjectName: '국어',
-        optionName: koreanOption,
-        totalCount: answerKey.length,
-        correctCount,
-        wrongCount: answerKey.length - correctCount,
-        accuracy: Math.round((correctCount / answerKey.length) * 100),
-        wrongQuestions,
-        details,
-        submittedAnswers: valueToSave,
+    try {
+      const response = await fetch(`/api/exams/${currentSubject.apiSubject.examSubjectId}/grade`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers }),
       });
-      setView('result');
-      return;
-    }
 
-    setGradeResult(null);
-    setView('subjects');
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || '채점에 실패했습니다.');
+      }
+
+      const grade = result.data;
+      if (!Array.isArray(grade.questionResults) || grade.questionResults.length === 0) {
+        throw new Error('문항별 채점 결과를 받지 못했습니다. 백엔드 응답 형식을 확인해 주세요.');
+      }
+
+      const details = grade.questionResults.map((item) => ({
+        number: item.questionNumber,
+        submitted: item.submittedAnswer ?? '',
+        correct: String(item.correctAnswer),
+        isCorrect: item.isCorrect,
+        points: item.points,
+      }));
+
+      const wrongQuestions = details
+        .filter((item) => item.submitted !== '' && !item.isCorrect)
+        .map((item) => item.number);
+      const unansweredQuestions = details
+        .filter((item) => item.submitted === '')
+        .map((item) => item.number);
+
+      setSavedAnswers((previous) => ({
+        ...previous,
+        [currentSubject.key]: currentSubject.type === 'math'
+          ? [...draftMathAnswers]
+          : draftChoiceAnswers,
+      }));
+
+      setGradeResult({
+        subjectKey: currentSubject.key,
+        examTitle: `${year} ${month} 모의고사`,
+        subjectName: grade.subjectName,
+        optionName: grade.optionName,
+        totalCount: details.length,
+        correctCount: grade.correctCount,
+        wrongCount: grade.wrongCount,
+        unansweredCount: grade.unansweredCount,
+        accuracy: details.length ? Math.round((grade.correctCount / details.length) * 100) : 0,
+        score: grade.score,
+        maxScore: grade.maxScore,
+        wrongQuestions,
+        unansweredQuestions,
+        details,
+        submittedAnswers: currentSubject.type === 'math' ? [...draftMathAnswers] : draftChoiceAnswers,
+      });
+
+      setView('result');
+    } catch (error) {
+      setMessage(error.message || '채점 중 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const changeExamSelection = () => {
@@ -181,8 +343,11 @@ export default function MockExamPage() {
   };
 
   const resetCurrentAnswers = () => {
-    if (currentSubject?.type === 'math') setDraftMathAnswers(Array(30).fill(''));
-    else setDraftChoiceAnswers('');
+    if (currentSubject?.type === 'math') {
+      setDraftMathAnswers(Array(30).fill(''));
+    } else {
+      setDraftChoiceAnswers('');
+    }
     setMessage('');
   };
 
@@ -193,32 +358,61 @@ export default function MockExamPage() {
         <section className="mock-selection-panel omr-result-panel">
           <div className="omr-result-icon"><CheckCircle2 size={32} /></div>
           <span className="eyebrow">AUTO GRADING COMPLETE</span>
-          <h1>국어 채점 결과</h1>
-          <p>{gradeResult.examTitle} · 고3 · {gradeResult.optionName}</p>
+          <h1>{gradeResult.subjectName} 채점 결과</h1>
+          <p>{gradeResult.examTitle} · {gradeResult.optionName || '필수 영역'}</p>
           <div className="omr-grade-metrics">
-            <div className="omr-grade-metric primary"><span>정답 문항</span><strong>{gradeResult.correctCount}<small> / {gradeResult.totalCount}</small></strong></div>
-            <div className="omr-grade-metric"><span>정답률</span><strong>{gradeResult.accuracy}<small>%</small></strong></div>
-            <div className="omr-grade-metric"><span>오답 문항</span><strong>{gradeResult.wrongCount}<small>개</small></strong></div>
+            <div className="omr-grade-metric primary">
+              <span>총점</span>
+              <strong>{gradeResult.score}<small> / {gradeResult.maxScore}점</small></strong>
+            </div>
+            <div className="omr-grade-metric">
+              <span>정답</span>
+              <strong>{gradeResult.correctCount}<small>문항</small></strong>
+            </div>
+            <div className="omr-grade-metric">
+              <span>오답</span>
+              <strong>{gradeResult.wrongCount}<small>문항</small></strong>
+            </div>
+            <div className="omr-grade-metric">
+              <span>미응답</span>
+              <strong>{gradeResult.unansweredCount}<small>문항</small></strong>
+            </div>
+            <div className="omr-grade-metric">
+              <span>정답률</span>
+              <strong>{gradeResult.accuracy}<small>%</small></strong>
+            </div>
           </div>
+
           <div className="omr-result-section-title">문항별 채점 결과</div>
           <div className="omr-answer-grid omr-graded-answer-grid">
-            {gradeResult.details.map((item) => (
-              <div className={`omr-answer-cell ${item.isCorrect ? 'is-correct' : 'is-wrong'}`} key={item.number}>
-                <small>{item.number}번</small><strong>{item.isCorrect ? '정답' : '오답'}</strong>
-                {!item.isCorrect && <em>내 답 {item.submitted} · 정답 {item.correct}</em>}
-              </div>
-            ))}
+            {gradeResult.details.map((item) => {
+              const isUnanswered = item.submitted === '';
+              const statusClass = isUnanswered ? 'is-unanswered' : item.isCorrect ? 'is-correct' : 'is-wrong';
+              return (
+                <div className={`omr-answer-cell ${statusClass}`} key={item.number}>
+                  <small>{item.number}번</small>
+                  <strong>{isUnanswered ? '—' : item.isCorrect ? 'O' : 'X'}</strong>
+                  <em>내 답: {isUnanswered ? '미응답' : item.submitted} · 정답: {item.correct}</em>
+                </div>
+              );
+            })}
           </div>
-          <div className="omr-key-notice">
-            <strong>{gradeResult.wrongQuestions.length ? `틀린 문항: ${gradeResult.wrongQuestions.join(', ')}번` : '45문항 모두 정답이야! 🎉'}</strong>
-            <p>첨부한 정답표 이미지의 답과 네가 입력한 답안을 문항별로 비교했어.</p>
-          </div>
-          <div className="omr-key-notice omr-score-caveat">
-            <strong>현재는 정답 개수와 정답률만 계산했어.</strong>
-            <p>첨부한 정답표 이미지에는 문항별 배점이 없어서 100점 원점수는 아직 계산하지 않았어. 배점표를 확인한 뒤 추가할게.</p>
-          </div>
+
+          {gradeResult.wrongQuestions.length > 0 && (
+            <div className="omr-key-notice">
+              <strong>오답 문항: {gradeResult.wrongQuestions.join(', ')}번</strong>
+              <p>붉은색 X 표시가 있는 문항을 확인해 주세요.</p>
+            </div>
+          )}
+          {gradeResult.unansweredQuestions.length > 0 && (
+            <div className="omr-key-notice omr-score-caveat">
+              <strong>미응답 문항: {gradeResult.unansweredQuestions.join(', ')}번</strong>
+              <p>미응답 문항은 오답과 구분하여 표시했습니다.</p>
+            </div>
+          )}
+
           <div className="omr-result-actions">
-            <button type="button" className="mock-secondary-button" onClick={() => openAnswerSheet('korean')}>답안 수정하기</button>
+            <button type="button" className="mock-secondary-button" onClick={() => openAnswerSheet(gradeResult.subjectKey)}>답안 수정하기</button>
             <button type="button" className="mock-confirm-button" onClick={() => setView('subjects')}>과목 목록으로 <ArrowRight size={16} /></button>
           </div>
         </section>
@@ -230,7 +424,6 @@ export default function MockExamPage() {
     return (
       <div className="page-content subpage-content mock-page omr-page">
         <div className="breadcrumb">DREAM CAMPUS <ChevronRight size={14} /> MOCK EXAM <ChevronRight size={14} /> {currentSubject.name} 답안 입력</div>
-
         <section className="mock-heading">
           <div>
             <span className="eyebrow">MOCK EXAM · ANSWER SHEET</span>
@@ -245,10 +438,10 @@ export default function MockExamPage() {
             <div className="mock-title-icon"><BookOpenCheck size={19} /></div>
             <div>
               <span className="eyebrow">ANSWER SHEET</span>
-              <h2>답안을 입력해 줘</h2>
+              <h2>답안을 입력해 주세요.</h2>
               {currentSubject.type === 'math'
-                ? <p>1~21번은 객관식, 22~30번은 단답형으로 입력해. 실제 회차의 문항 형식은 정답 자료 등록 시 다시 확인할 거야.</p>
-                : <p>1번부터 {currentSubject.questionCount}번까지 정답 번호를 순서대로 입력하면 돼.</p>}
+                ? <p>1~21번은 객관식, 22~30번은 단답형입니다. 미응답 문항은 비워 두셔도 됩니다.</p>
+                : <p>1번부터 {currentSubject.questionCount}번까지 답안을 순서대로 입력해 주세요. 미응답 문항은 숫자 0으로 표시해 주세요.</p>}
             </div>
           </div>
 
@@ -279,7 +472,7 @@ export default function MockExamPage() {
             </>
           ) : (
             <>
-              <label className="omr-input-label" htmlFor="omr-answer-input">내 답안</label>
+              <label className="omr-input-label" htmlFor="omr-answer-input">제출 답안</label>
               <input
                 id="omr-answer-input"
                 className="omr-answer-input"
@@ -293,31 +486,36 @@ export default function MockExamPage() {
                 placeholder={`예: ${'12345'.repeat(Math.ceil(currentSubject.questionCount / 5)).slice(0, Math.min(15, currentSubject.questionCount))}...`}
               />
               <div className="omr-input-meta">
-                <span>숫자 1~5만 입력 가능</span>
+                <span>숫자 1~5 입력 · 미응답은 0 입력</span>
                 <strong>{answeredCount} / {currentSubject.questionCount}문항</strong>
               </div>
               <div className="omr-progress-track"><span style={{ width: `${(answeredCount / currentSubject.questionCount) * 100}%` }} /></div>
               <div className="omr-number-preview-title">
                 <strong>입력 확인</strong>
-                <span>입력한 답안이 문항 순서대로 표시돼.</span>
+                <span>입력한 답안이 문항 순서대로 표시됩니다.</span>
               </div>
               <div className="omr-answer-grid">
-                {Array.from({ length: currentSubject.questionCount }, (_, index) => (
-                  <div className={`omr-answer-cell ${draftChoiceAnswers[index] ? 'filled' : ''}`} key={index}>
-                    <small>{index + 1}</small>
-                    <strong>{draftChoiceAnswers[index] || '·'}</strong>
-                  </div>
-                ))}
+                {Array.from({ length: currentSubject.questionCount }, (_, index) => {
+                  const answer = draftChoiceAnswers[index];
+                  return (
+                    <div className={`omr-answer-cell ${answer && answer !== '0' ? 'filled' : ''}`} key={index}>
+                      <small>{index + 1}</small>
+                      <strong>{answer === '0' ? '—' : answer || '·'}</strong>
+                    </div>
+                  );
+                })}
               </div>
             </>
           )}
 
           {message && <div className="omr-warning-message" role="alert">{message}</div>}
           <div className="omr-actions">
-            <button type="button" className="mock-secondary-button" onClick={resetCurrentAnswers}>답안 지우기</button>
-            <button type="button" className="mock-confirm-button" onClick={saveCurrentAnswers}>답안 저장하기 <ArrowRight size={16} /></button>
+            <button type="button" className="mock-secondary-button" onClick={resetCurrentAnswers} disabled={isSubmitting}>답안 지우기</button>
+            <button type="button" className="mock-confirm-button" onClick={saveCurrentAnswers} disabled={isSubmitting}>
+              {isSubmitting ? '채점 중...' : '제출하고 채점하기'} <ArrowRight size={16} />
+            </button>
           </div>
-          <button type="button" className="omr-back-link" onClick={() => { setMessage(''); setView('subjects'); }}>← 과목 목록으로 돌아가기</button>
+          <button type="button" className="omr-back-link" onClick={() => { setMessage(''); setView('subjects'); }} disabled={isSubmitting}>← 과목 목록으로 돌아가기</button>
         </section>
       </div>
     );
@@ -331,7 +529,7 @@ export default function MockExamPage() {
           <div>
             <span className="eyebrow">MOCK EXAM · GRADE 3</span>
             <h1>응시 과목 및 답안 입력</h1>
-            <p>{selectedExamText} · 선택한 과목의 답안지를 각각 작성해 줘.</p>
+            <p>{selectedExamText} · 선택한 과목의 답안지를 각각 작성해 주세요.</p>
           </div>
           <div className="mock-heading-icon"><FileText size={34} /></div>
         </section>
@@ -342,7 +540,7 @@ export default function MockExamPage() {
             <div>
               <span className="eyebrow">YOUR SUBJECTS</span>
               <h2>선택한 과목</h2>
-              <p>국어·수학 선택과목과 탐구 선택을 확인해 줘.</p>
+              <p>국어·수학 선택과목과 탐구 선택을 확인해 주세요.</p>
             </div>
           </div>
           <div className="mock-selected-summary-grid">
@@ -355,41 +553,34 @@ export default function MockExamPage() {
         <section className="mock-selection-panel">
           <div className="mock-subheading">
             <strong>답안 입력 목록</strong>
-            <span>{savedCount} / {activeSubjects.length}과목 저장 완료</span>
+            <span>{savedCount} / {activeSubjects.length}과목 채점 완료</span>
           </div>
-          <div className="mock-progress-track"><span style={{ width: `${(savedCount / activeSubjects.length) * 100}%` }} /></div>
+          <div className="mock-progress-track"><span style={{ width: `${activeSubjects.length ? (savedCount / activeSubjects.length) * 100 : 0}%` }} /></div>
           <div className="mock-answer-subject-list">
             {activeSubjects.map((item) => {
               const isSaved = Object.prototype.hasOwnProperty.call(savedAnswers, item.key);
               return (
                 <div className={`mock-answer-subject-card ${isSaved ? 'saved' : ''}`} key={item.key}>
                   <div className="mock-answer-subject-info">
-                    <span className="mock-answer-subject-category">{item.name === '국어' || item.name === '수학' ? '선택과목 포함' : item.name === '영어' || item.name === '한국사' ? '필수 영역' : `탐구 ${item.order}선택`}</span>
-                    {item.key === 'korean' && getRegisteredAnswerKey(year, month, 'korean', koreanOption) && <span className="omr-grade-ready-label">정답표 등록 · 자동 채점 가능</span>}
+                    <span className="mock-answer-subject-category">{item.key === 'korean' || item.key === 'math' ? '선택과목 포함' : item.key === 'english' || item.key === 'history' ? '필수 영역' : `탐구 ${item.order}선택`}</span>
                     <strong>{item.name}</strong>
                     <small>{item.detail} · {item.questionCount}문항</small>
                   </div>
                   <div className="mock-answer-subject-action">
-                    {isSaved && <span className="mock-saved-label"><CheckCircle2 size={14} /> 저장 완료</span>}
+                    {isSaved && <span className="mock-saved-label"><CheckCircle2 size={14} /> 채점 완료</span>}
                     <button type="button" className="mock-secondary-button" onClick={() => openAnswerSheet(item.key)}>{isSaved ? '답안 수정' : '답안 입력'}</button>
                   </div>
                 </div>
               );
             })}
           </div>
-          {savedCount === activeSubjects.length && (
-            <div className="mock-all-saved-notice">
-              <CheckCircle2 size={18} />
-              <div><strong>선택한 과목의 답안 입력이 모두 끝났어!</strong><p>현재 등록된 2027학년도 9월 국어 정답표는 국어 답안을 저장하면 자동 채점돼. 나머지 과목은 해당 회차 정답표 등록 후 채점할 수 있어.</p></div>
-            </div>
-          )}
         </section>
 
         <div className="mock-confirm-panel">
           <div className="mock-confirm-copy">
             <span className="eyebrow">EXAM SETTINGS</span>
-            <h2>시험 조건을 바꾸고 싶어?</h2>
-            <p>학년도, 월 또는 선택과목을 다시 설정할 수 있어.</p>
+            <h2>시험 조건을 변경하시겠습니까?</h2>
+            <p>학년도, 시험 월 또는 선택과목을 다시 설정할 수 있습니다.</p>
           </div>
           <button type="button" className="mock-confirm-button" onClick={changeExamSelection}>시험 조건 수정하기 <ArrowRight size={17} /></button>
         </div>
@@ -405,7 +596,7 @@ export default function MockExamPage() {
         <div>
           <span className="eyebrow">MOCK EXAM SERVICE · GRADE 3</span>
           <h1>고3 모의고사 풀서비스</h1>
-          <p>학년도와 시행 월, 국어·수학 선택과목, 탐구 과목을 설정해 줘.</p>
+          <p>학년도와 시행 월, 국어·수학 선택과목, 탐구 과목을 설정해 주세요.</p>
         </div>
         <div className="mock-heading-icon"><FileText size={34} /></div>
       </section>
@@ -416,25 +607,30 @@ export default function MockExamPage() {
           <div>
             <span className="eyebrow">STEP 01</span>
             <h2>시험 정보 선택</h2>
-            <p>이 서비스는 고3 수험생 전용이야.</p>
+            <p>이 서비스는 고3 수험생 전용입니다.</p>
           </div>
         </div>
         <div className="mock-grade-fixed"><GraduationCap size={18} /><span>응시 학년</span><strong>고3</strong><small>고3 전용 서비스</small></div>
         <div className="mock-select-grid">
           <label className="mock-field">
             <span>학년도</span>
-            <select value={year} onChange={(event) => { setYear(event.target.value); clearSavedAnswers(); }}>
+            <select value={year} onChange={(event) => handleYearChange(event.target.value)}>
               {years.map((item) => <option key={item} value={item}>{item}</option>)}
             </select>
           </label>
           <label className="mock-field">
             <span>시험 월</span>
-            <select value={month} onChange={(event) => { setMonth(event.target.value); clearSavedAnswers(); }}>
+            <select value={month} onChange={(event) => handleMonthChange(event.target.value)}>
               {months.map((item) => <option key={item} value={item}>{item}{item === '11월' ? ' 수능' : ' 모의고사'}</option>)}
             </select>
           </label>
         </div>
-        <p className="omr-subject-note">※ 실제 시행 월과 시험 종류는 학년도별로 다를 수 있어. 현재 선택 목록은 화면 구성 단계이며, 공식 문제·정답이 등록된 회차만 추후 채점할 수 있도록 연결할 예정이야.</p>
+        {apiLoading && <div className="omr-data-message">과목 정보를 불러오고 있습니다.</div>}
+        {apiError && <div className="omr-warning-message" role="alert">{apiError}</div>}
+        {!apiLoading && !apiError && apiSubjects.length === 0 && (
+          <div className="omr-data-message">선택한 학년도와 시험 월에 등록된 과목 데이터가 없습니다.</div>
+        )}
+        <p className="omr-subject-note">공식 정답이 등록된 과목만 자동 채점할 수 있습니다. 정답이 아직 등록되지 않은 과목은 선택할 수 없습니다.</p>
       </section>
 
       <section className="mock-selection-panel">
@@ -443,7 +639,7 @@ export default function MockExamPage() {
           <div>
             <span className="eyebrow">STEP 02</span>
             <h2>국어·수학 선택과목</h2>
-            <p>각 영역에서 한 과목씩 선택해 줘.</p>
+            <p>각 영역에서 한 과목씩 선택해 주세요.</p>
           </div>
         </div>
         <div className="mock-elective-block">
@@ -474,12 +670,12 @@ export default function MockExamPage() {
           <div>
             <span className="eyebrow">STEP 03</span>
             <h2>사회·과학탐구 선택</h2>
-            <p>사회·과학탐구 17개 과목 중 최대 2개까지 자유롭게 선택해 줘.</p>
+            <p>사회·과학탐구 과목 중 최대 2개까지 선택해 주세요.</p>
           </div>
         </div>
         <div className="mock-inquiry-counter"><strong>{selectedInquiries.length} / 2</strong><span>과목 선택</span><div className="mock-inquiry-counter-track"><i style={{ width: `${(selectedInquiries.length / 2) * 100}%` }} /></div></div>
         <div className="mock-inquiry-group">
-          <div className="mock-inquiry-group-title"><strong>사회탐구</strong><span>9과목</span></div>
+          <div className="mock-inquiry-group-title"><strong>사회탐구</strong><span>{socialStudies.length}과목</span></div>
           <div className="mock-inquiry-grid">
             {socialStudies.map((item) => (
               <button type="button" key={item} aria-pressed={selectedInquiries.includes(item)} disabled={selectedInquiries.length >= 2 && !selectedInquiries.includes(item)} className={`mock-inquiry-chip ${selectedInquiries.includes(item) ? 'selected' : ''}`} onClick={() => handleInquiryToggle(item)}>
@@ -489,16 +685,20 @@ export default function MockExamPage() {
           </div>
         </div>
         <div className="mock-inquiry-group">
-          <div className="mock-inquiry-group-title"><strong>과학탐구</strong><span>8과목</span></div>
+          <div className="mock-inquiry-group-title"><strong>과학탐구</strong><span>{scienceStudies.length}과목</span></div>
           <div className="mock-inquiry-grid">
-            {scienceStudies.map((item) => (
-              <button type="button" key={item} aria-pressed={selectedInquiries.includes(item)} disabled={selectedInquiries.length >= 2 && !selectedInquiries.includes(item)} className={`mock-inquiry-chip ${selectedInquiries.includes(item) ? 'selected' : ''}`} onClick={() => handleInquiryToggle(item)}>
-                {item}{selectedInquiries.includes(item) && <CheckCircle2 size={15} />}
-              </button>
-            ))}
+            {scienceStudies.map((item) => {
+              const subject = yearsInData.find((entry) => entry.subjectName === item);
+              const notReady = subject?.dataStatus === 'NOT_READY';
+              return (
+                <button type="button" key={item} aria-pressed={selectedInquiries.includes(item)} disabled={notReady || (selectedInquiries.length >= 2 && !selectedInquiries.includes(item))} className={`mock-inquiry-chip ${selectedInquiries.includes(item) ? 'selected' : ''}`} onClick={() => handleInquiryToggle(item)} title={notReady ? '정답 데이터 미등록' : ''}>
+                  {item}{notReady ? ' · 준비 중' : selectedInquiries.includes(item) && <CheckCircle2 size={15} />}
+                </button>
+              );
+            })}
           </div>
         </div>
-        <p className="omr-subject-note">사회탐구와 과학탐구를 섞어서 선택해도 돼. 예: 생활과 윤리 + 생명과학Ⅰ</p>
+        <p className="omr-subject-note">사회탐구와 과학탐구를 함께 선택할 수 있습니다. 정답 미등록 과목은 선택할 수 없습니다.</p>
       </section>
 
       {message && <div className="omr-warning-message" role="alert">{message}</div>}
@@ -508,7 +708,7 @@ export default function MockExamPage() {
           <h2>선택한 시험 확인</h2>
           <p>{selectedExamText} · 국어 {koreanOption || '미선택'} · 수학 {mathOption || '미선택'} · 탐구 {selectedInquiries.length ? selectedInquiries.join(' / ') : '미선택'}</p>
         </div>
-        <button type="button" className="mock-confirm-button" onClick={confirmExamSelection}>선택 완료 <ArrowRight size={17} /></button>
+        <button type="button" className="mock-confirm-button" onClick={confirmExamSelection} disabled={apiLoading || apiSubjects.length === 0}>선택 완료 <ArrowRight size={17} /></button>
       </section>
     </div>
   );
