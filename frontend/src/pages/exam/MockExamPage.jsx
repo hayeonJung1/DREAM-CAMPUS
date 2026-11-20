@@ -424,7 +424,7 @@ export default function MockExamPage() {
     return (
       <div className="page-content subpage-content mock-page omr-page">
         <div className="breadcrumb">DREAM CAMPUS <ChevronRight size={14} /> MOCK EXAM <ChevronRight size={14} /> {currentSubject.name} 답안 입력</div>
-        <section className="mock-heading">
+      <section className="mock-heading mock-heading-sage">
           <div>
             <span className="eyebrow">MOCK EXAM · ANSWER SHEET</span>
             <h1>{currentSubject.name} OMR 답안 입력</h1>
@@ -525,7 +525,7 @@ export default function MockExamPage() {
     return (
       <div className="page-content subpage-content mock-page omr-page">
         <div className="breadcrumb">DREAM CAMPUS <ChevronRight size={14} /> MOCK EXAM <ChevronRight size={14} /> 답안 입력 과목</div>
-        <section className="mock-heading">
+        <section className="mock-heading mock-heading-powder">
           <div>
             <span className="eyebrow">MOCK EXAM · GRADE 3</span>
             <h1>응시 과목 및 답안 입력</h1>
@@ -592,7 +592,7 @@ export default function MockExamPage() {
     <div className="page-content subpage-content mock-page omr-page">
       <div className="breadcrumb">DREAM CAMPUS <ChevronRight size={14} /> MOCK EXAM</div>
 
-      <section className="mock-heading">
+      <section className="mock-heading mock-heading-powder">
         <div>
           <span className="eyebrow">MOCK EXAM SERVICE · GRADE 3</span>
           <h1>고3 모의고사 풀서비스</h1>

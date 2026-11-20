@@ -2,8 +2,16 @@ import React, { useState } from 'react';
 import Header from '../components/common/Header.jsx';
 import Sidebar from '../components/common/Sidebar.jsx';
 
-/** 로그인 후 공통 화면 레이아웃: 사이드바, 상단바, 페이지 콘텐츠 */
-export default function MainLayout({ navItems, activePage, navigate, profile, children }) {
+export default function MainLayout({
+  navItems,
+  activePage,
+  navigate,
+  profile,
+  children,
+  authUser,
+  onOpenAuth,
+  onLogout,
+}) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -14,7 +22,13 @@ export default function MainLayout({ navItems, activePage, navigate, profile, ch
 
   return (
     <div className={`app-shell ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-      {mobileNavOpen && <button className="mobile-backdrop" aria-label="메뉴 닫기" onClick={() => setMobileNavOpen(false)} />}
+      {mobileNavOpen && (
+        <button
+          className="mobile-backdrop"
+          aria-label="메뉴 닫기"
+          onClick={() => setMobileNavOpen(false)}
+        />
+      )}
       <Sidebar
         navItems={navItems}
         activePage={activePage}
@@ -29,6 +43,9 @@ export default function MainLayout({ navItems, activePage, navigate, profile, ch
           activePage={activePage}
           navigate={handleNavigate}
           profile={profile}
+          authUser={authUser}
+          onOpenAuth={onOpenAuth}
+          onLogout={onLogout}
           onOpenMobileNav={() => setMobileNavOpen(true)}
         />
         {children}

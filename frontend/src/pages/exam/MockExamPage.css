@@ -696,3 +696,62 @@
 .omr-grade-ready-label { display: inline-flex; width: fit-content; margin-top: 5px; padding: 4px 8px; border-radius: 99px; color: #39754b; background: #edf7ef; font-size: 10px; font-weight: 800; }
 .omr-score-caveat { margin-top: 10px; background: #fffaf3; }
 @media (max-width: 720px) { .omr-grade-metrics { grid-template-columns: 1fr; } }
+
+.mock-heading-powder {
+  color: #3D5270;
+  background: linear-gradient(
+    115deg,
+    #EDF3FB 0%,
+    #DDE8F6 55%,
+    #CBDCF0 100%
+  );
+  box-shadow: 0 14px 30px rgba(83, 112, 150, 0.12);
+}
+
+.mock-heading-powder .eyebrow {
+  color: #7891B2;
+}
+
+.mock-heading-powder h1 {
+  color: #3D5270;
+}
+
+.mock-heading-powder p {
+  color: #637990;
+}
+
+.mock-heading-powder .mock-heading-icon {
+  border-color: rgba(120, 145, 178, 0.25);
+  color: #5D789A;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* 세이지 민트 OMR 배너 */
+.mock-heading-sage {
+  color: #365C4A;
+  background: linear-gradient(
+    115deg,
+    #EDF5F0 0%,
+    #DCECE3 55%,
+    #C9E0D4 100%
+  );
+  box-shadow: 0 14px 30px rgba(83, 130, 103, 0.12);
+}
+
+.mock-heading-sage .eyebrow {
+  color: #789A87;
+}
+
+.mock-heading-sage h1 {
+  color: #365C4A;
+}
+
+.mock-heading-sage p {
+  color: #617E6F;
+}
+
+.mock-heading-sage .mock-heading-icon {
+  border-color: rgba(120, 154, 135, 0.3);
+  color: #557D66;
+  background: rgba(255, 255, 255, 0.55);
+}
