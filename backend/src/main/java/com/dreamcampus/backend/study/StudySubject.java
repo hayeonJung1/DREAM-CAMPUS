@@ -32,7 +32,6 @@ public class StudySubject {
     @Column(name = "is_active", nullable = false)
     private boolean active;
 
-    // DB가 기본값(현재 시각)을 넣으므로 코드에서는 읽기만 한다
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -42,5 +41,17 @@ public class StudySubject {
         subject.name = name;
         subject.active = true;
         return subject;
+    }
+
+    public void rename(String name) {
+        this.name = name;
+    }
+
+    public void activate() {
+        this.active = true;
+    }
+
+    public void deactivate() {
+        this.active = false;
     }
 }

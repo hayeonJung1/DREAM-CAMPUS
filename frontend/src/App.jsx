@@ -8,8 +8,12 @@ import MockExamPage from './pages/exam/MockExamPage.jsx';
 import MyPage from './pages/mypage/MyPage.jsx';
 import AdmissionCalendarPage from './pages/calendar/CalendarPage.jsx';
 import ArcadePage from './pages/arcade/ArcadePage.jsx';
-import PlaceholderPage from './pages/placeholder/PlaceholderPage.jsx';import MainLayout from './layouts/MainLayout.jsx';
+import PlaceholderPage from './pages/placeholder/PlaceholderPage.jsx';
+import MainLayout from './layouts/MainLayout.jsx';
 import { createDefaultProfile, normalizeProfile, usePersistentState, getLocalDateKey, createInitialAdmissionEvents, normalizeAdmissionEvents } from './utils/appUtils.js';
+import StudyPage from './pages/study/StudyPage.jsx';
+
+
 
 const navItems = [
   { id: 'home', label: '홈', icon: House },
@@ -212,6 +216,8 @@ function App() {
         <AdmissionCalendarPage events={admissionEvents} onEventsChange={setAdmissionEvents} initialDate={calendarFocusDate} />
       ) : activePage === 'arcade' ? (
         <ArcadePage universityName={profile.university} onNavigate={navigate} />
+      ) : activePage === 'timer' ? (
+        <StudyPage />
       ) : (
         <PlaceholderPage info={pageInfo[activePage] ?? pageInfo.mypage} onBack={() => navigate('home')} />
       )}
