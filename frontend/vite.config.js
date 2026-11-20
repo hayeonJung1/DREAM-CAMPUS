@@ -4,9 +4,4 @@ import react from '@vitejs/plugin-react';
 // React JSX transform and Fast Refresh
 export default defineConfig({
   plugins: [react()],
-  server: {
-    proxy: {
-      '/api': 'http://localhost:8080',
-    },
-  },
 });
