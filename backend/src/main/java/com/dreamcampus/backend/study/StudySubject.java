@@ -32,7 +32,6 @@ public class StudySubject {
     @Column(name = "is_active", nullable = false)
     private boolean active;     // DB의 is_active <-> 자바의 active(true=보임, false=숨김)
 
-    // DB가 기본값(현재 시각)을 넣으므로 코드에서는 읽기만 한다
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 

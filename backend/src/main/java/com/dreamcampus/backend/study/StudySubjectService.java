@@ -20,7 +20,6 @@ public class StudySubjectService {
 
     @Transactional
     public List<StudySubjectResponse> getMySubjects(Long userId) {
-        // 과목이 숨긴 것까지 합쳐 0개일 때만 기본 과목을 만들어 준다
         if (!repository.existsByUserId(userId)) {
             List<StudySubject> defaults = DEFAULT_SUBJECTS.stream()
                     .map(name -> StudySubject.create(userId, name))
@@ -31,7 +30,6 @@ public class StudySubjectService {
                 .map(StudySubjectResponse::from)
                 .toList();
     }
-
 
     @Transactional
     public StudySubjectResponse create(Long userId, String rawName) {
