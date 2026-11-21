@@ -11,6 +11,6 @@ public interface StudySubjectRepository extends JpaRepository<StudySubject, Long
 
     boolean existsByUserId(Long userId);
 
-    // 숨긴 과목까지 포함해서 같은 이름이 있는지
-    Optional<StudySubject> findByUserIdAndName(Long userId, String name);
+    // 보이는 과목 중에서만 같은 이름을 찾는다 (숨긴 과목은 이름 중복 검사에서 제외)
+    Optional<StudySubject> findByUserIdAndNameAndActiveTrue(Long userId, String name);
 }

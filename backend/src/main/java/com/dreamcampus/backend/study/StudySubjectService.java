@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,15 +33,10 @@ public class StudySubjectService {
     @Transactional
     public StudySubjectResponse create(Long userId, String rawName) {
         String name = rawName.trim();
-        Optional<StudySubject> existing = repository.findByUserIdAndName(userId, name);
 
-        if (existing.isPresent()) {
-            StudySubject subject = existing.get();
-            if (subject.isActive()) {
-                throw ApiException.conflict("이미 있는 과목입니다.");
-            }
-            subject.activate();   // 숨겨 둔 과목이면 다시 살린다
-            return StudySubjectResponse.from(subject);
+        // 보이는 과목 중에 같은 이름이 있으면 중복. 숨긴 과목은 상관없다.
+        if (repository.findByUserIdAndNameAndActiveTrue(userId, name).isPresent()) {
+            throw ApiException.conflict("이미 있는 과목입니다.");
         }
         return StudySubjectResponse.from(repository.save(StudySubject.create(userId, name)));
     }
@@ -52,8 +46,8 @@ public class StudySubjectService {
         StudySubject subject = findMine(userId, subjectId);
         String name = rawName.trim();
 
-        repository.findByUserIdAndName(userId, name)
-                .filter(other -> !other.getId().equals(subjectId))
+        repository.findByUserIdAndNameAndActiveTrue(userId, name)
+                .filter(other -> !other.getId().equals(subjectId))   // 나 자신은 제외
                 .ifPresent(other -> { throw ApiException.conflict("이미 있는 과목 이름입니다."); });
 
         subject.rename(name);

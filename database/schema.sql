@@ -31,16 +31,18 @@ CREATE TABLE IF NOT EXISTS subjects (
 
 -- 공부 과목: 회원이 직접 추가·삭제하는 자기 과목
 --   삭제는 is_active = FALSE로 숨기기만 한다 (과거 공부 기록이 이 과목을 참조하기 때문)
+--   이름 중복은 "보이는 과목끼리만" 막는다 → active_name 은 숨긴 과목이면 NULL이라 유니크 검사에서 빠진다
 CREATE TABLE IF NOT EXISTS study_subjects (
-                                              study_subject_id BIGINT      NOT NULL AUTO_INCREMENT,
-                                              user_id          BIGINT      NOT NULL,
-                                              subject_name     VARCHAR(30) NOT NULL,
-    is_active        BOOLEAN     NOT NULL DEFAULT TRUE,
-    created_at       DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (study_subject_id),
-    UNIQUE KEY uk_study_subjects_user_name (user_id, subject_name),   -- 내 과목끼리만 중복 금지
-    CONSTRAINT fk_study_subjects_user FOREIGN KEY (user_id) REFERENCES users (user_id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  study_subject_id BIGINT      NOT NULL AUTO_INCREMENT,
+  user_id          BIGINT      NOT NULL,
+  subject_name     VARCHAR(30) NOT NULL,
+  is_active        BOOLEAN     NOT NULL DEFAULT TRUE,
+  created_at       DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  active_name      VARCHAR(30) GENERATED ALWAYS AS (IF(is_active, subject_name, NULL)) STORED,
+  PRIMARY KEY (study_subject_id),
+  UNIQUE KEY uk_study_subjects_user_active_name (user_id, active_name),
+  CONSTRAINT fk_study_subjects_user FOREIGN KEY (user_id) REFERENCES users (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 공부 세션: 타이머 시작부터 종료까지 한 번
 --   진행 중 : ended_at IS NULL AND paused_at IS NULL
