@@ -4,6 +4,7 @@ import {
   Music2, UserRound,
 } from 'lucide-react';
 import HomePage from './pages/Home/HomePage.jsx';
+import AuthPage from './pages/auth/AuthPage.jsx';
 import MockExamPage from './pages/exam/MockExamPage.jsx';
 import MyPage from './pages/mypage/MyPage.jsx';
 import AdmissionCalendarPage from './pages/calendar/CalendarPage.jsx';
@@ -106,6 +107,43 @@ const pageInfo = {
 
 function App() {
   const [activePage, setActivePage] = useState('home');
+  const [authUser, setAuthUser] = useState(null);
+  const [authMode, setAuthMode] = useState(null);
+const [authLoading, setAuthLoading] = useState(true);
+
+useEffect(() => {
+  let isActive = true;
+
+  fetch('/api/auth/me', {
+    credentials: 'same-origin',
+  })
+    .then(async (response) => {
+      if (response.status === 401) return null;
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) return null;
+
+      return result.data;
+    })
+    .then((user) => {
+      if (isActive) {
+        setAuthUser(user);
+        setAuthLoading(false);
+      }
+    })
+    .catch(() => {
+      if (isActive) {
+        setAuthUser(null);
+        setAuthLoading(false);
+      }
+    });
+
+  return () => {
+    isActive = false;
+  };
+}, []);
+
 
   const [profile, setProfile] = usePersistentState('dream-campus-profile', createDefaultProfile, normalizeProfile);
   const [admissionEvents, setAdmissionEvents] = usePersistentState(
@@ -192,13 +230,54 @@ function App() {
     }));
   };
 
+  const handleLogout = async () => {
+  try {
+    const response = await fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'same-origin',
+    });
+
+    if (!response.ok) {
+      throw new Error('로그아웃에 실패했습니다.');
+    }
+
+    setAuthUser(null);
+  } catch (error) {
+    alert(error.message || '로그아웃 중 오류가 발생했습니다.');
+  }
+};
+
+if (authMode) {
   return (
-    <MainLayout navItems={navItems} activePage={activePage} navigate={navigate} profile={profile}>
+    <AuthPage
+      initialMode={authMode}
+      onCancel={() => setAuthMode(null)}
+      onLogin={(user) => {
+        setAuthUser(user);
+        setAuthMode(null);
+      }}
+    />
+  );
+}
+
+   return (
+    <MainLayout
+  navItems={navItems}
+  activePage={activePage}
+  navigate={navigate}
+  profile={profile}
+  authUser={authUser}
+  onOpenAuth={setAuthMode}
+  onLogout={handleLogout}
+>
       {activePage === 'home' ? (
         <HomePage
           quickMenus={quickMenus}
           onNavigate={navigate}
-          onOpenCalendar={(dateKey) => { setCalendarFocusDate(dateKey || getLocalDateKey()); navigate('admission'); }}
+          onOpenCalendar={(dateKey) => {
+            setCalendarFocusDate(dateKey || getLocalDateKey());
+            navigate('admission');
+          }}
           profile={profile}
           dailyGoals={dailyGoals}
           onAddGoal={addDailyGoal}
@@ -211,17 +290,23 @@ function App() {
       ) : activePage === 'mypage' ? (
         <MyPage profile={profile} onProfileChange={setProfile} />
       ) : activePage === 'admission' ? (
-        <AdmissionCalendarPage events={admissionEvents} onEventsChange={setAdmissionEvents} initialDate={calendarFocusDate} />
+        <AdmissionCalendarPage
+          events={admissionEvents}
+          onEventsChange={setAdmissionEvents}
+          initialDate={calendarFocusDate}
+        />
       ) : activePage === 'arcade' ? (
         <ArcadePage universityName={profile.university} onNavigate={navigate} />
       ) : activePage === 'timer' ?(
         <StudyPage/>
       ) : (
-        <PlaceholderPage info={pageInfo[activePage] ?? pageInfo.mypage} onBack={() => navigate('home')} />
+        <PlaceholderPage
+          info={pageInfo[activePage] ?? pageInfo.mypage}
+          onBack={() => navigate('home')}
+        />
       )}
     </MainLayout>
   );
 }
-
 
 export default App;
