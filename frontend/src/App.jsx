@@ -5,13 +5,14 @@ import {
 } from 'lucide-react';
 import HomePage from './pages/Home/HomePage.jsx';
 import AuthPage from './pages/auth/AuthPage.jsx';
-import MockExamPage from './pages/Exam/MockExamPage.jsx';
-import MyPage from './pages/MyPage/MyPage.jsx';
-import AdmissionCalendarPage from './pages/Calendar/CalendarPage.jsx';
-import ArcadePage from './pages/Arcade/ArcadePage.jsx';
+import MockExamPage from './pages/exam/MockExamPage.jsx';
+import MyPage from './pages/mypage/MyPage.jsx';
+import AdmissionCalendarPage from './pages/calendar/CalendarPage.jsx';
+import ArcadePage from './pages/arcade/ArcadePage.jsx';
 import PlaceholderPage from './pages/placeholder/PlaceholderPage.jsx';
 import MainLayout from './layouts/MainLayout.jsx';
 import { createDefaultProfile, normalizeProfile, usePersistentState, getLocalDateKey, createInitialAdmissionEvents, normalizeAdmissionEvents } from './utils/appUtils.js';
+import StudyPage  from './pages/study/StudyPage.jsx'
 
 const navItems = [
   { id: 'home', label: '홈', icon: House },
@@ -296,6 +297,8 @@ if (authMode) {
         />
       ) : activePage === 'arcade' ? (
         <ArcadePage universityName={profile.university} onNavigate={navigate} />
+      ) : activePage === 'timer' ?(
+        <StudyPage/>
       ) : (
         <PlaceholderPage
           info={pageInfo[activePage] ?? pageInfo.mypage}

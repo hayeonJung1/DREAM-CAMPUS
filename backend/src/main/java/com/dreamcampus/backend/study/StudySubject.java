@@ -12,35 +12,47 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "study_subjects")
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity     // 이 클래스는 DB와 연결된다
+@Table(name = "study_subjects")     // 연결할 테이블 이름(안쓰면 클래스명)
+@Getter     // Lombok
+@NoArgsConstructor(access = AccessLevel.PROTECTED)      // Lombok : 기본 생성자 생성
 public class StudySubject {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "study_subject_id")
+    @Id     // PK
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
+    @Column(name = "study_subject_id")      // 연결할 컬럼 이름(필드명 id와 컬럼명이 달라서 지정)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false) // NOT NULL 지정
     private Long userId;
 
-    @Column(name = "subject_name", nullable = false, length = 30)
+    @Column(name = "subject_name", nullable = false, length = 30)  // VARCHAR(30)
     private String name;
 
     @Column(name = "is_active", nullable = false)
-    private boolean active;
+    private boolean active;     // DB의 is_active <-> 자바의 active(true=보임, false=숨김)
 
-    // DB가 기본값(현재 시각)을 넣으므로 코드에서는 읽기만 한다
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    // 새 과목을 만드는 메서드
     public static StudySubject create(Long userId, String name) {
         StudySubject subject = new StudySubject();
         subject.userId = userId;
         subject.name = name;
         subject.active = true;
         return subject;
+    }
+
+    public void rename(String name) {
+        this.name = name;
+    }
+
+    public void activate() {
+        this.active = true;
+    }
+
+    public void deactivate() {
+        this.active = false;
     }
 }

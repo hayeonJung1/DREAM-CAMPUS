@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+// 빈 등록
 @Component
 public class CurrentUser {
 
