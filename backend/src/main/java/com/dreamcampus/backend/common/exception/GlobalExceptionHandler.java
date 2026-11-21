@@ -10,13 +10,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 우리가 일부러 던진 에러 (404, 409 등)
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse<Void>> handleApi(ApiException e) {
         return ResponseEntity.status(e.getStatus()).body(ApiResponse.fail(e.getMessage()));
     }
 
-    // 입력값 검증 실패 (@Valid)
+    // 입력값 검증 실패(@Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidation(MethodArgumentNotValidException e) {
         String message = e.getBindingResult().getFieldErrors().stream()
