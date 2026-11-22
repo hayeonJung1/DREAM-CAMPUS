@@ -44,21 +44,25 @@ CREATE TABLE IF NOT EXISTS study_subjects (
   CONSTRAINT fk_study_subjects_user FOREIGN KEY (user_id) REFERENCES users (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 -- 공부 세션: 타이머 시작부터 종료까지 한 번
 --   진행 중 : ended_at IS NULL AND paused_at IS NULL
 --   일시정지: ended_at IS NULL AND paused_at IS NOT NULL
 --   종료    : ended_at IS NOT NULL
+--   active_user_id: 종료 전 세션이면 user_id, 아니면 NULL → UNIQUE와 합쳐 "회원당 진행 중 세션 1개"를 DB가 보장
 CREATE TABLE IF NOT EXISTS study_sessions (
-                                              session_id           BIGINT   NOT NULL AUTO_INCREMENT,
-                                              user_id              BIGINT   NOT NULL,
-                                              study_subject_id     BIGINT   NULL,                  -- 과목 없이 자유 공부 허용
-                                              started_at           DATETIME NOT NULL,
-                                              ended_at             DATETIME NULL,
-                                              paused_at            DATETIME NULL,
-                                              total_paused_seconds INT      NOT NULL DEFAULT 0,
-                                              duration_seconds     INT      NOT NULL DEFAULT 0,
-                                              PRIMARY KEY (session_id),
-    KEY idx_study_sessions_user_started (user_id, started_at),
-    CONSTRAINT fk_study_sessions_user    FOREIGN KEY (user_id)          REFERENCES users (user_id),
-    CONSTRAINT fk_study_sessions_subject FOREIGN KEY (study_subject_id) REFERENCES study_subjects (study_subject_id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  session_id           BIGINT   NOT NULL AUTO_INCREMENT,
+  user_id              BIGINT   NOT NULL,
+  study_subject_id     BIGINT   NULL,
+  started_at           DATETIME NOT NULL,
+  ended_at             DATETIME NULL,
+  paused_at            DATETIME NULL,
+  total_paused_seconds INT      NOT NULL DEFAULT 0,
+  duration_seconds     INT      NOT NULL DEFAULT 0,
+  active_user_id       BIGINT GENERATED ALWAYS AS (IF(ended_at IS NULL, user_id, NULL)) STORED,
+  PRIMARY KEY (session_id),
+  UNIQUE KEY uk_study_sessions_active_user (active_user_id),
+  KEY idx_study_sessions_user_started (user_id, started_at),
+  CONSTRAINT fk_study_sessions_user    FOREIGN KEY (user_id)          REFERENCES users (user_id),
+  CONSTRAINT fk_study_sessions_subject FOREIGN KEY (study_subject_id) REFERENCES study_subjects (study_subject_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
