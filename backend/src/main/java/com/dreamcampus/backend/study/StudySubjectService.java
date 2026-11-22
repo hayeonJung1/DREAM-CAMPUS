@@ -60,7 +60,7 @@ public class StudySubjectService {
     }
 
     // 내 과목인지 확인하며 가져온다
-    private StudySubject findMine(Long userId, Long subjectId) {
+    public StudySubject findMine(Long userId, Long subjectId) {
         StudySubject subject = repository.findById(subjectId)
                 .orElseThrow(() -> ApiException.notFound("과목을 찾을 수 없습니다."));
         if (!subject.getUserId().equals(userId)) {
