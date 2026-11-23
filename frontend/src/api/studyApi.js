@@ -42,3 +42,20 @@ export const startSession = async (studySubjectId) =>
 export const pauseSession = async (id) => (await api.put(`/study/sessions/${id}/pause`)).data.data;
 export const resumeSession = async (id) => (await api.put(`/study/sessions/${id}/resume`)).data.data;
 export const stopSession = async (id) => (await api.put(`/study/sessions/${id}/stop`)).data.data;
+
+// ---------- 통계·목표 ----------
+
+// date: "2026-11-23" 형식
+export const getDailyStat = async (date) =>
+  (await api.get('/study/statistics/daily', { params: { date } })).data.data;
+
+export const getWeeklyStat = async (date) =>
+  (await api.get('/study/statistics/weekly', { params: { date } })).data.data;
+
+// from, to 가 undefined 이면 axios 가 쿼리에서 빼서 전체 기간으로 조회된다
+export const getSubjectStats = async (from, to) =>
+  (await api.get('/study/statistics/subjects', { params: { from, to } })).data.data;
+
+// dailyGoalMinutes 가 null 이면 목표 해제
+export const updateGoal = async (dailyGoalMinutes) =>
+  (await api.put('/study/goal', { dailyGoalMinutes })).data.data;
