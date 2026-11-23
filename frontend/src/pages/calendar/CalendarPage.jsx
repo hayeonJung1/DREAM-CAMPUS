@@ -75,7 +75,7 @@ export default function AdmissionCalendarPage({ events, onEventsChange, initialD
       <div className="breadcrumb">DREAM CAMPUS <ChevronRight size={14} /> ADMISSION CALENDAR</div>
       <section className="subpage-hero dc-admission-hero">
         <div className="subpage-icon"><CalendarDays size={30} /></div>
-        <div><span className="eyebrow">MY ADMISSION PLAN</span><h1>나의 입시 캘린더</h1><p>모의고사, 수능, 논술, 면접, 원서 접수까지 나만의 일정을 관리해 보세요.</p></div>
+        <div><span className="eyebrow">MY ADMISSION PLAN</span><h1>나의 캘린더</h1><p>모의고사, 수능, 논술, 면접, 원서 접수까지 나만의 일정을 관리해 보세요.</p></div>
         <button type="button" className="dc-admission-add-main" onClick={() => openNewForm(selectedDate)}><Plus size={16} /> 일정 추가</button>
       </section>
 

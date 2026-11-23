@@ -20,7 +20,7 @@ const navItems = [
   { id: 'mock', label: '모의고사 풀서비스', icon: FileText },
   { id: 'timer', label: '공부 타이머', icon: Clock3 },
   { id: 'campus', label: '대학교 및 학과 정보', icon: Landmark },
-  { id: 'admission', label: '입시 캘린더', icon: CalendarDays },
+  { id: 'admission', label: '캘린더', icon: CalendarDays },
   { id: 'playlist', label: '응원 플레이리스트', icon: Music2 },
   { id: 'arcade', label: '오락실 / 합격 응원', icon: Gamepad2 },
   { id: 'mypage', label: '마이페이지', icon: UserRound },
@@ -53,7 +53,7 @@ const quickMenus = [
   },
   {
     id: 'admission',
-    title: '입시 캘린더',
+    title: '캘린더',
     description: '주요 일정과 D-day 확인',
     icon: CalendarDays,
     tone: 'pink',
@@ -85,7 +85,7 @@ const pageInfo = {
   },
   admission: {
     eyebrow: 'ADMISSION',
-    title: '입시 캘린더',
+    title: '캘린더',
     description: '모의고사와 수시·정시 등 중요한 입시 일정을 한곳에서 관리해 보세요.',
     icon: CalendarDays,
     features: ['월별 입시 일정 확인', '모의고사 및 수능 D-day', '수시·정시 원서접수 일정', '나만의 일정 추가'],
@@ -212,7 +212,7 @@ useEffect(() => {
   };
 }, []);
 
- const navigate = (id) => {
+const navigate = (id) => {
   const nextPage = navItems.some((item) => item.id === id)
     ? id
     : 'home';
@@ -223,6 +223,9 @@ useEffect(() => {
     ...(window.history.state || {}),
     dreamCampusPage: nextPage,
     dreamCampusAppEntry: true,
+    dreamCampusPlaylistCategory: null,
+    dreamCampusPlaylistSection: null,
+    dreamCampusArcadeFeature: null,
   };
 
   window.history.pushState(
@@ -234,7 +237,6 @@ useEffect(() => {
   setActivePage(nextPage);
   setAuthMode(null);
 };
-
   const addDailyGoal = (text) => {
     const trimmed = text.trim();
     if (!trimmed) return;

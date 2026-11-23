@@ -20,7 +20,7 @@ export default function MiniAdmissionCalendar({ events, onOpenCalendar }) {
   return (
     <div className="panel dc-mini-calendar">
       <div className="dc-calendar-panel-heading">
-        <div><span className="dc-calendar-heading-icon"><CalendarDays size={18} /></span><div><span className="eyebrow">ADMISSION SCHEDULE</span><h3>입시 캘린더</h3></div></div>
+        <div><span className="dc-calendar-heading-icon"><CalendarDays size={18} /></span><div><span className="eyebrow">ADMISSION SCHEDULE</span><h3>캘린더</h3></div></div>
         <button type="button" onClick={() => onOpenCalendar(todayKey)}>전체 보기 <ChevronRight size={15} /></button>
       </div>
       <div className="dc-mini-month-controls">
