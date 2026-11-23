@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight, LockKeyhole, Mail, UserRound, X } from 'lucide-react';
 import AuthLayout from '../../layouts/AuthLayout.jsx';
 import './AuthPage.css';
@@ -13,12 +13,46 @@ export default function AuthPage({ onLogin, initialMode = 'login', onCancel }) {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleModeChange = (nextMode) => {
-    setMode(nextMode);
-    setMessage('');
-    setPassword('');
-    setConfirmPassword('');
+  useEffect(() => {
+  const handlePopState = (event) => {
+    const state = event.state || {};
+
+    if (state.dreamCampusAuth) {
+      setMode(state.dreamCampusAuthMode || 'login');
+      setPassword('');
+      setConfirmPassword('');
+    }
   };
+
+  window.addEventListener('popstate', handlePopState);
+
+  return () => {
+    window.removeEventListener('popstate', handlePopState);
+  };
+}, []);
+
+  const handleModeChange = (nextMode) => {
+  if (nextMode === mode) return;
+
+  const currentState = window.history.state || {};
+  const currentDepth = Number(currentState.dreamCampusAuthDepth) || 1;
+
+  window.history.pushState(
+    {
+      ...currentState,
+      dreamCampusAuth: true,
+      dreamCampusAuthMode: nextMode,
+      dreamCampusAuthDepth: currentDepth + 1,
+    },
+    '',
+    window.location.href
+  );
+
+  setMode(nextMode);
+  setMessage('');
+  setPassword('');
+  setConfirmPassword('');
+};
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -60,13 +94,32 @@ export default function AuthPage({ onLogin, initialMode = 'login', onCancel }) {
         throw new Error(result.message || '요청 처리에 실패했습니다.');
       }
 
-      if (mode === 'register') {
-        setMessage('회원가입이 완료되었습니다. 로그인해 주세요.');
-        setMode('login');
-        setPassword('');
-        setConfirmPassword('');
-        return;
-      }
+     if (mode === 'register') {
+  setMessage('회원가입이 완료되었습니다. 로그인해 주세요.');
+  setPassword('');
+  setConfirmPassword('');
+
+  const currentState = window.history.state || {};
+  const currentDepth = Number(currentState.dreamCampusAuthDepth) || 1;
+
+  if (currentDepth > 1) {
+    window.history.back();
+  } else {
+    window.history.replaceState(
+      {
+        ...currentState,
+        dreamCampusAuth: true,
+        dreamCampusAuthMode: 'login',
+      },
+      '',
+      window.location.href
+    );
+
+    setMode('login');
+  }
+
+  return;
+}
 
       if (!result.data?.userId) {
         throw new Error('회원 정보를 확인할 수 없습니다.');

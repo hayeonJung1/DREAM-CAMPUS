@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ArrowRight, ArrowUpRight, Bell, BookOpenCheck, CalendarDays, TrendingUp,
   CheckCircle2, ChevronLeft, ChevronRight, Clock3, FileText, Gamepad2,
@@ -66,16 +66,64 @@ const ARCADE_MENU_ITEMS = [
   },
 ];
 
+
+
 export default function ArcadePage({ universityName, onNavigate }) {
-  const [selectedFeature, setSelectedFeature] = useState('menu');
+  const [selectedFeature, setSelectedFeature] = useState(() => {
+    const state = window.history.state || {};
+
+    return state.dreamCampusPage === 'arcade' &&
+      state.dreamCampusArcadeFeature === 'yeot'
+      ? 'yeot'
+      : 'menu';
+  });
+
   const hasUniversity = Boolean(String(universityName || '').trim());
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      if (event.state?.dreamCampusPage === 'arcade') {
+        setSelectedFeature(
+          event.state.dreamCampusArcadeFeature || 'menu'
+        );
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
+  const openFeature = (featureId) => {
+    window.history.pushState(
+      {
+        ...(window.history.state || {}),
+        dreamCampusPage: 'arcade',
+        dreamCampusArcadeFeature: featureId,
+      },
+      '',
+      window.location.href
+    );
+
+    setSelectedFeature(featureId);
+  };
+
+  const returnToMenu = () => {
+    if (window.history.state?.dreamCampusArcadeFeature) {
+      window.history.back();
+    } else {
+      setSelectedFeature('menu');
+    }
+  };
 
   if (selectedFeature === 'yeot') {
     return (
       <div className="page-content subpage-content dc-arcade-game-page">
         <YeotGame
           universityName={universityName}
-          onBack={() => setSelectedFeature('menu')}
+          onBack={returnToMenu}
         />
       </div>
     );
@@ -84,6 +132,7 @@ export default function ArcadePage({ universityName, onNavigate }) {
   return (
     <div className="page-content subpage-content dc-arcade-page">
       <div className="breadcrumb">DREAM CAMPUS <ChevronRight size={14} /> ARCADE</div>
+
       <section className="subpage-hero dc-arcade-hero">
         <div className="subpage-icon"><Gamepad2 size={30} /></div>
         <div>
@@ -91,8 +140,8 @@ export default function ArcadePage({ universityName, onNavigate }) {
           <h1>오락실 / 합격 응원</h1>
           <p>
             {hasUniversity
-              ? `${universityName}을(를) 향한 너의 꿈을 응원해! 잠깐 쉬어가도 괜찮아.`
-              : '공부하다 지칠 때, 잠깐 쉬어가며 작은 즐거움을 찾아봐!'}
+              ? `${universityName}을(를) 향한 너의 꿈을 응원해요! 잠깐 쉬어가도 괜찮아요.`
+              : '공부하다 지칠 때, 잠깐 쉬어가며 작은 즐거움을 찾아봐요!'}
           </p>
         </div>
       </section>
@@ -111,7 +160,7 @@ export default function ArcadePage({ universityName, onNavigate }) {
             type="button"
             key={item.id}
             className={`dc-arcade-feature-card tone-${item.tone} ${item.available ? 'is-available' : 'is-coming'}`}
-            onClick={() => item.available && setSelectedFeature(item.id)}
+            onClick={() => item.available && openFeature(item.id)}
             disabled={!item.available}
             aria-label={`${item.title}${item.available ? ' 시작' : ', 준비 중'}`}
           >
@@ -143,7 +192,7 @@ export default function ArcadePage({ universityName, onNavigate }) {
         </button>
       </section>
 
-      <p className="dc-arcade-note">※ 오락실 콘텐츠는 공부와 입시 사이에 잠깐 즐기는 응원용 기능이야.</p>
+      <p className="dc-arcade-note">※ 오락실 콘텐츠는 공부와 입시 사이에 잠깐 즐기는 응원용 기능입니다.</p>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import MyPage from './pages/mypage/MyPage.jsx';
 import AdmissionCalendarPage from './pages/calendar/CalendarPage.jsx';
 import ArcadePage from './pages/arcade/ArcadePage.jsx';
 import PlaceholderPage from './pages/placeholder/PlaceholderPage.jsx';
+import PlaylistPage from './pages/playlist/PlaylistPage.jsx';
 import MainLayout from './layouts/MainLayout.jsx';
 import { createDefaultProfile, normalizeProfile, usePersistentState, getLocalDateKey, createInitialAdmissionEvents, normalizeAdmissionEvents } from './utils/appUtils.js';
 import StudyPage  from './pages/study/StudyPage.jsx'
@@ -106,9 +107,23 @@ const pageInfo = {
 };
 
 function App() {
-  const [activePage, setActivePage] = useState('home');
-  const [authUser, setAuthUser] = useState(null);
-  const [authMode, setAuthMode] = useState(null);
+  const [activePage, setActivePage] = useState(() => {
+  const savedPage = window.history.state?.dreamCampusPage;
+
+  return navItems.some((item) => item.id === savedPage)
+    ? savedPage
+    : 'home';
+});
+ const [authUser, setAuthUser] = useState(null);
+
+const [authMode, setAuthMode] = useState(() => {
+  const state = window.history.state || {};
+
+  return state.dreamCampusAuth
+    ? state.dreamCampusAuthMode || 'login'
+    : null;
+});
+
 const [authLoading, setAuthLoading] = useState(true);
 
 useEffect(() => {
@@ -155,52 +170,70 @@ useEffect(() => {
   const dailyGoals = Array.isArray(goalsByDate[todayKey]) ? goalsByDate[todayKey] : [];
 
 
-  // 앱 내부 화면 이동을 브라우저 방문 기록과 연결해 뒤로가기를 누르면 홈으로 돌아오게 함.
-  useEffect(() => {
-    const currentState = window.history.state || {};
+useEffect(() => {
+  const currentState = window.history.state || {};
+  const validPage = navItems.some(
+    (item) => item.id === currentState.dreamCampusPage
+  );
+
+  if (!validPage) {
     window.history.replaceState(
-      { ...currentState, dreamCampusPage: 'home', dreamCampusBase: true },
+      {
+        ...currentState,
+        dreamCampusPage: 'home',
+        dreamCampusAppEntry: true,
+      },
       '',
-      window.location.href,
+      window.location.href
+    );
+  }
+
+  const handlePopState = (event) => {
+    const state = event.state || {};
+    const requestedPage = state.dreamCampusPage;
+
+    const isValidPage = navItems.some(
+      (item) => item.id === requestedPage
     );
 
-    const handlePopState = (event) => {
-      const requestedPage = event.state?.dreamCampusPage;
-      const validPage = navItems.some((item) => item.id === requestedPage);
-      setActivePage(validPage ? requestedPage : 'home');
-    };
+    setActivePage(isValidPage ? requestedPage : 'home');
 
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
-
-  const navigate = (id) => {
-    const nextPage = navItems.some((item) => item.id === id) ? id : 'home';
-
-    if (nextPage !== activePage) {
-      if (nextPage === 'home' && window.history.state?.dreamCampusAppEntry) {
-        // 메뉴의 홈 버튼도 브라우저 뒤로가기와 같은 흐름으로 홈에 복귀함.
-        window.history.back();
-        setActivePage('home');
-      } else if (nextPage !== 'home') {
-        const nextState = {
-          ...(window.history.state || {}),
-          dreamCampusPage: nextPage,
-          dreamCampusAppEntry: true,
-        };
-        if (activePage === 'home') {
-          window.history.pushState(nextState, '', window.location.href);
-        } else {
-          // 앱 내부의 다른 메뉴로 이동할 때는 한 단계의 뒤로가기로 홈에 복귀하도록 현재 항목을 교체함.
-          window.history.replaceState(nextState, '', window.location.href);
-        }
-        setActivePage(nextPage);
-      } else {
-        setActivePage('home');
-      }
-    }
-
+    setAuthMode(
+      state.dreamCampusAuth
+        ? state.dreamCampusAuthMode || 'login'
+        : null
+    );
   };
+
+  window.addEventListener('popstate', handlePopState);
+
+  return () => {
+    window.removeEventListener('popstate', handlePopState);
+  };
+}, []);
+
+ const navigate = (id) => {
+  const nextPage = navItems.some((item) => item.id === id)
+    ? id
+    : 'home';
+
+  if (nextPage === activePage && !authMode) return;
+
+  const nextState = {
+    ...(window.history.state || {}),
+    dreamCampusPage: nextPage,
+    dreamCampusAppEntry: true,
+  };
+
+  window.history.pushState(
+    nextState,
+    '',
+    window.location.href
+  );
+
+  setActivePage(nextPage);
+  setAuthMode(null);
+};
 
   const addDailyGoal = (text) => {
     const trimmed = text.trim();
@@ -230,6 +263,39 @@ useEffect(() => {
     }));
   };
 
+  const openAuth = (mode = 'login') => {
+  const nextMode = mode === 'register' ? 'register' : 'login';
+
+  window.history.pushState(
+    {
+      ...(window.history.state || {}),
+      dreamCampusPage: activePage,
+      dreamCampusAuth: true,
+      dreamCampusAuthMode: nextMode,
+      dreamCampusAuthDepth: 1,
+    },
+    '',
+    window.location.href
+  );
+
+  setAuthMode(nextMode);
+};
+
+const closeAuth = () => {
+  const state = window.history.state || {};
+
+  if (state.dreamCampusAuth) {
+    const depth = Math.max(
+      1,
+      Number(state.dreamCampusAuthDepth) || 1
+    );
+
+    window.history.go(-depth);
+  } else {
+    setAuthMode(null);
+  }
+};
+
   const handleLogout = async () => {
   try {
     const response = await fetch('/api/auth/logout', {
@@ -251,11 +317,11 @@ if (authMode) {
   return (
     <AuthPage
       initialMode={authMode}
-      onCancel={() => setAuthMode(null)}
-      onLogin={(user) => {
-        setAuthUser(user);
-        setAuthMode(null);
-      }}
+   onCancel={closeAuth}
+onLogin={(user) => {
+  setAuthUser(user);
+  closeAuth();
+}}
     />
   );
 }
@@ -267,7 +333,7 @@ if (authMode) {
   navigate={navigate}
   profile={profile}
   authUser={authUser}
-  onOpenAuth={setAuthMode}
+ onOpenAuth={openAuth}
   onLogout={handleLogout}
 >
       {activePage === 'home' ? (
@@ -295,16 +361,22 @@ if (authMode) {
           onEventsChange={setAdmissionEvents}
           initialDate={calendarFocusDate}
         />
-      ) : activePage === 'arcade' ? (
-        <ArcadePage universityName={profile.university} onNavigate={navigate} />
-      ) : activePage === 'timer' ?(
-        <StudyPage/>
-      ) : (
-        <PlaceholderPage
-          info={pageInfo[activePage] ?? pageInfo.mypage}
-          onBack={() => navigate('home')}
-        />
-      )}
+        ) : activePage === 'arcade' ? (
+  <ArcadePage
+    universityName={profile.university}
+    onNavigate={navigate}
+  />
+
+      ) : activePage === 'timer' ? (
+  <StudyPage />
+) : activePage === 'playlist' ? (
+  <PlaylistPage />
+) : (
+  <PlaceholderPage
+    info={pageInfo[activePage] ?? pageInfo.mypage}
+    onBack={() => navigate('home')}
+  />
+)}
     </MainLayout>
   );
 }
