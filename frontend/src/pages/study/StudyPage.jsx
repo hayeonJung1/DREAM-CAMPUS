@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ChevronRight, Clock3 } from 'lucide-react';
+import { ChevronRight, Clock3, Timer, TrendingUp } from 'lucide-react';
 import {
   getActiveSession,
   getSubjects,
@@ -8,6 +8,7 @@ import {
   startSession,
   stopSession,
 } from '../../api/studyApi.js';
+import StudyStatsPanel from './StudyStatsPanel.jsx';
 import StudyTimerPanel from './StudyTimerPanel.jsx';
 import SubjectManager from './SubjectManager.jsx';
 import './StudyPage.css';
@@ -16,10 +17,11 @@ import './StudyPage.css';
 const withSyncTime = (response) => ({ ...response, syncedAt: Date.now() });
 
 export default function StudyPage() {
+  const [tab, setTab] = useState('timer');                       // 'timer' | 'stats'
   const [subjects, setSubjects] = useState([]);
-  const [session, setSession] = useState(null);                 // 진행 중인 세션
+  const [session, setSession] = useState(null);                  // 진행 중인 세션
   const [selectedSubjectId, setSelectedSubjectId] = useState(null);
-  const [lastResult, setLastResult] = useState(null);           // 방금 끝낸 세션
+  const [lastResult, setLastResult] = useState(null);            // 방금 끝낸 세션
   const [loading, setLoading] = useState(true);
   const [needLogin, setNeedLogin] = useState(false);
   const [error, setError] = useState('');
@@ -125,23 +127,50 @@ export default function StudyPage() {
         </section>
       ) : (
         <>
-          {error && <p className="study-error" role="alert">{error}</p>}
+          <div className="study-tabs" role="tablist" aria-label="공부 타이머 메뉴">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === 'timer'}
+              className={`study-tab ${tab === 'timer' ? 'is-active' : ''}`}
+              onClick={() => setTab('timer')}
+            >
+              <Timer size={15} /> 타이머
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === 'stats'}
+              className={`study-tab ${tab === 'stats' ? 'is-active' : ''}`}
+              onClick={() => setTab('stats')}
+            >
+              <TrendingUp size={15} /> 통계
+            </button>
+          </div>
 
-          <StudyTimerPanel
-            subjects={subjects}
-            session={session}
-            selectedSubjectId={effectiveSubjectId}
-            onSelectSubject={setSelectedSubjectId}
-            onStart={handleStart}
-            onPause={handlePause}
-            onResume={handleResume}
-            onStop={handleStop}
-            busy={busy}
-            loading={loading}
-            lastResult={lastResult}
-          />
+          {tab === 'timer' ? (
+            <>
+              {error && <p className="study-error" role="alert">{error}</p>}
 
-          <SubjectManager subjects={subjects} setSubjects={setSubjects} loading={loading} />
+              <StudyTimerPanel
+                subjects={subjects}
+                session={session}
+                selectedSubjectId={effectiveSubjectId}
+                onSelectSubject={setSelectedSubjectId}
+                onStart={handleStart}
+                onPause={handlePause}
+                onResume={handleResume}
+                onStop={handleStop}
+                busy={busy}
+                loading={loading}
+                lastResult={lastResult}
+              />
+
+              <SubjectManager subjects={subjects} setSubjects={setSubjects} loading={loading} />
+            </>
+          ) : (
+            <StudyStatsPanel />
+          )}
         </>
       )}
     </div>
