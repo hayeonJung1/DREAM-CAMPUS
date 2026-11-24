@@ -59,6 +59,7 @@
   place-items: center;
   width: 32px;
   height: 32px;
+  padding: 0;
   border: 0;
   border-radius: 9px;
   background: transparent;
@@ -403,3 +404,47 @@
   line-height: 1.55;
 }
 .study-guest-notice svg { flex: 0 0 auto; margin-top: 2px; }
+
+
+/* ---------- 공부 기록 ---------- */
+
+.study-date-nav { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 14px; }
+.study-date-label {
+  position: relative;
+  min-width: 190px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: var(--wine-soft, #F0F0F8);
+  color: #565772;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+}
+/* 날짜 입력창은 투명하게 위에 덮어서, 글자를 누르면 달력이 열리게 한다 */
+.study-date-label input { position: absolute; inset: 0; width: 100%; opacity: 0; cursor: pointer; }
+
+.study-record-total { margin: 0 0 12px; color: var(--muted, #85899B); font-size: 12px; font-weight: 700; }
+.study-record-total strong { color: #565772; }
+
+.study-record-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.study-record-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 12px 11px 14px;
+  border: 1px solid var(--line, #E8E8F0);
+  border-radius: 12px;
+  background: var(--surface, #FFFEFD);
+}
+.study-record-time { display: grid; flex: 0 0 auto; min-width: 78px; gap: 2px; color: var(--muted, #85899B); font-size: 11px; font-weight: 700; }
+.study-record-time strong { color: #565772; font-size: 14px; font-variant-numeric: tabular-nums; }
+.study-record-time span.is-live { color: #3E8A63; }
+.study-record-main { display: grid; flex: 1; min-width: 0; gap: 3px; }
+.study-record-subject { color: #565772; font-size: 13px; font-weight: 800; overflow-wrap: anywhere; }
+.study-record-meta { color: var(--muted, #85899B); font-size: 11px; font-weight: 700; }
+
+@media (max-width: 560px) {
+  .study-date-label { min-width: 0; flex: 1; }
+  .study-record-time { min-width: 66px; }
+}

@@ -59,3 +59,14 @@ export const getSubjectStats = async (from, to) =>
 // dailyGoalMinutes 가 null 이면 목표 해제
 export const updateGoal = async (dailyGoalMinutes) =>
   (await api.put('/study/goal', { dailyGoalMinutes })).data.data;
+
+
+// ---------- 공부 기록 ----------
+
+// from, to: "2026-11-23" 형식. 둘 다 생략하면 오늘
+export const getSessions = async (from, to) =>
+  (await api.get('/study/sessions', { params: { from, to } })).data.data;
+
+export const deleteSession = async (id) => {
+  await api.delete(`/study/sessions/${id}`);
+};
