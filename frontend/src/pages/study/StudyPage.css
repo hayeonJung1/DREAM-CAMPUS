@@ -386,3 +386,20 @@
   .study-week-range { min-width: 0; }
   .study-goal-editor form { flex-direction: column; align-items: stretch; }
 }
+
+/* ---------- 비로그인 안내 ---------- */
+
+.study-guest-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: #FFF8E8;
+  color: #8A6A1F;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+.study-guest-notice svg { flex: 0 0 auto; margin-top: 2px; }
