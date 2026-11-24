@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getDailyStat, getSubjectStats, getWeeklyStat, updateGoal } from '../../api/studyApi.js';
+import { useStudyApi } from './StudyApiContext.js';
 import { addDays, toDateString } from '../../utils/formatTime.js';
 import SubjectStatsCard from './SubjectStatsCard.jsx';
 import TodaySummaryCard from './TodaySummaryCard.jsx';
@@ -19,6 +19,7 @@ function subjectRange(range) {
 }
 
 export default function StudyStatsPanel() {
+  const api = useStudyApi();
   const [reloadKey, setReloadKey] = useState(0);     // 값이 바뀌면 통계를 다시 불러온다
   const [weekOffset, setWeekOffset] = useState(0);   // 0 = 이번 주, 1 = 지난주 ...
   const [range, setRange] = useState('week');
@@ -37,7 +38,7 @@ export default function StudyStatsPanel() {
   // 오늘 통계
   useEffect(() => {
     let ignore = false;
-    getDailyStat(toDateString(new Date()))
+    api.getDailyStat(toDateString(new Date()))
       .then((data) => { if (!ignore) setDaily(data); })
       .catch((e) => { if (!ignore) handleError(e); });
     return () => { ignore = true; };
@@ -46,7 +47,7 @@ export default function StudyStatsPanel() {
   // 주간 통계
   useEffect(() => {
     let ignore = false;
-    getWeeklyStat(toDateString(addDays(new Date(), -7 * weekOffset)))
+    api.getWeeklyStat(toDateString(addDays(new Date(), -7 * weekOffset)))
       .then((data) => { if (!ignore) setWeekly(data); })
       .catch((e) => { if (!ignore) handleError(e); });
     return () => { ignore = true; };
@@ -56,7 +57,7 @@ export default function StudyStatsPanel() {
   useEffect(() => {
     let ignore = false;
     const { from, to } = subjectRange(range);
-    getSubjectStats(from, to)
+    api.getSubjectStats(from, to)
       .then((data) => { if (!ignore) setSubjects(data); })
       .catch((e) => { if (!ignore) handleError(e); });
     return () => { ignore = true; };
@@ -64,7 +65,7 @@ export default function StudyStatsPanel() {
 
   // 목표를 저장하면 달성률과 주간 목표 달성 일수가 달라지므로 다시 불러온다
   const handleSaveGoal = async (minutes) => {
-    await updateGoal(minutes);
+    await api.updateGoal(minutes);
     setReloadKey((key) => key + 1);
   };
 

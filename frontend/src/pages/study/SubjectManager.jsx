@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { BookOpen, Check, Pencil, Plus, Trash2, X } from 'lucide-react';
-import { createSubject, deleteSubject, renameSubject } from '../../api/studyApi.js';
+import { useStudyApi } from './StudyApiContext';
 
 const MAX_NAME_LENGTH = 30;
 
 export default function SubjectManager({ subjects, setSubjects, loading }) {
+  const api = useStudyApi();
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);       // 요청 중에는 버튼을 막아 중복 요청 방지
   const [newName, setNewName] = useState('');
@@ -34,7 +35,7 @@ export default function SubjectManager({ subjects, setSubjects, loading }) {
       return;
     }
     await run(async () => {
-      const created = await createSubject(name);
+      const created = await api.createSubject(name);
       setSubjects((prev) =>
         [...prev.filter((s) => s.studySubjectId !== created.studySubjectId), created]
           .sort((a, b) => a.studySubjectId - b.studySubjectId),
@@ -65,7 +66,7 @@ export default function SubjectManager({ subjects, setSubjects, loading }) {
       return;
     }
     const ok = await run(async () => {
-      const updated = await renameSubject(subject.studySubjectId, name);
+      const updated = await api.renameSubject(subject.studySubjectId, name);
       setSubjects((prev) => prev.map((s) => (s.studySubjectId === updated.studySubjectId ? updated : s)));
     });
     if (ok) cancelEdit();
@@ -74,7 +75,7 @@ export default function SubjectManager({ subjects, setSubjects, loading }) {
   const handleDelete = async (subject) => {
     if (!window.confirm(`'${subject.name}' 과목을 삭제할까요?\n이 과목으로 기록한 공부 시간은 그대로 남아요.`)) return;
     await run(async () => {
-      await deleteSubject(subject.studySubjectId);
+      await api.deleteSubject(subject.studySubjectId);
       setSubjects((prev) => prev.filter((s) => s.studySubjectId !== subject.studySubjectId));
     });
   };
