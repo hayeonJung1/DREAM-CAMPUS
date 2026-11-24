@@ -42,7 +42,7 @@ export default function StudyStatsPanel() {
       .then((data) => { if (!ignore) setDaily(data); })
       .catch((e) => { if (!ignore) handleError(e); });
     return () => { ignore = true; };
-  }, [reloadKey, handleError]);
+  }, [reloadKey, handleError, api]);
 
   // 주간 통계
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function StudyStatsPanel() {
       .then((data) => { if (!ignore) setWeekly(data); })
       .catch((e) => { if (!ignore) handleError(e); });
     return () => { ignore = true; };
-  }, [weekOffset, reloadKey, handleError]);
+  }, [weekOffset, reloadKey, handleError, api]);
 
   // 과목별 통계
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function StudyStatsPanel() {
       .then((data) => { if (!ignore) setSubjects(data); })
       .catch((e) => { if (!ignore) handleError(e); });
     return () => { ignore = true; };
-  }, [range, reloadKey, handleError]);
+  }, [range, reloadKey, handleError, api]);
 
   // 목표를 저장하면 달성률과 주간 목표 달성 일수가 달라지므로 다시 불러온다
   const handleSaveGoal = async (minutes) => {
