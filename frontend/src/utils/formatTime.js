@@ -46,3 +46,21 @@ export function addDays(date, days) {
   copy.setDate(copy.getDate() + days);
   return copy;
 }
+
+// "2026-11-23" → Date (브라우저의 로컬 날짜)
+export function parseDateString(text) {
+  const [y, m, d] = text.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+// "2026-11-23" → "2026년 11월 23일 (월)"
+export function formatDateLabel(text) {
+  const date = parseDateString(text);
+  const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 (${dayNames[date.getDay()]})`;
+}
+
+// "2026-11-23T09:05:00" → "09:05"
+export function formatTimeOfDay(dateTime) {
+  return dateTime ? dateTime.slice(11, 16) : '';
+}

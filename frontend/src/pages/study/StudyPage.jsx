@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { ChevronRight, Clock3, Info, Timer, TrendingUp } from 'lucide-react';
+import { CalendarDays, ChevronRight, Clock3, Info, Timer, TrendingUp } from 'lucide-react';
 import * as serverApi from '../../api/studyApi.js';
 import * as guestApi from '../../api/guestStudyApi.js';
 import { StudyApiContext } from './StudyApiContext.js';
 import StudyStatsPanel from './StudyStatsPanel.jsx';
+import StudyRecordsPanel from './StudyRecordsPanel.jsx';
 import StudyTimerPanel from './StudyTimerPanel.jsx';
 import SubjectManager from './SubjectManager.jsx';
 import './StudyPage.css';
@@ -172,6 +173,16 @@ export default function StudyPage() {
               onClick={() => setTab('stats')}
             >
               <TrendingUp size={15} /> 통계
+
+            </button>
+                        <button
+              type="button"
+              role="tab"
+              aria-selected={tab === 'records'}
+              className={`study-tab ${tab === 'records' ? 'is-active' : ''}`}
+              onClick={() => setTab('records')}
+            >
+              <CalendarDays size={15} /> 기록
             </button>
           </div>
 
@@ -195,8 +206,10 @@ export default function StudyPage() {
 
               <SubjectManager subjects={subjects} setSubjects={setSubjects} loading={loading} />
             </>
-          ) : (
+          ) : tab === 'stats' ? (
             mode !== null && <StudyStatsPanel />
+          ) : (
+            mode !== null && <StudyRecordsPanel />
           )}
         </StudyApiContext.Provider>
       )}

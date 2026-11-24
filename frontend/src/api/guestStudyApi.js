@@ -333,3 +333,42 @@ export async function updateGoal(dailyGoalMinutes) {
   save(data);
   return { dailyGoalMinutes: data.goalMinutes };
 }
+
+// ---------- 공부 기록 (서버의 GET/DELETE /api/study/sessions 와 같은 규칙) ----------
+
+// ms → "2026-11-23T09:05:00" (서버가 돌려주는 시각 문자열과 같은 모양)
+const toLocalDateTime = (ms) => {
+  const d = new Date(ms);
+  return `${toKey(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+};
+
+export async function getSessions(from, to) {
+  const end = to ?? toKey(new Date());
+  const start = from ?? end;
+  if (start > end) throw httpError(400, '시작일이 종료일보다 늦을 수 없어요.');
+
+  const data = load();
+  const now = Date.now();
+  return data.sessions
+    .filter((s) => {
+      const key = dateKey(s.startedAt);
+      return key >= start && key <= end;
+    })
+    .sort((a, b) => b.startedAt - a.startedAt)   // 최근 공부가 위로
+    .map((s) => ({
+      ...toSessionResponse(data, s, now),
+      startedAt: toLocalDateTime(s.startedAt),
+      pausedAt: s.pausedAt === null ? null : toLocalDateTime(s.pausedAt),
+      endedAt: s.endedAt === null ? null : toLocalDateTime(s.endedAt),
+    }));
+}
+
+export async function deleteSession(id) {
+  const data = load();
+  const session = findSession(data, id);
+  if (session.endedAt === null) {
+    throw httpError(409, '진행 중인 공부는 삭제할 수 없어요. 먼저 종료해 주세요.');
+  }
+  data.sessions = data.sessions.filter((s) => s.sessionId !== id);
+  save(data);
+}
