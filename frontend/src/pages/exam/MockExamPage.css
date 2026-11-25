@@ -755,3 +755,31 @@
   color: #557D66;
   background: rgba(255, 255, 255, 0.55);
 }
+
+
+/* 채점 결과 문항 그리드 너비 확보 (9열 -> 5열) */
+.omr-graded-answer-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 10px;
+}
+
+/* 문항 카드 내부 정렬 및 오답노트 버튼 가로 고정 */
+.omr-graded-answer-grid .omr-answer-cell {
+  padding: 12px 10px;
+  gap: 6px;
+}
+
+.omr-graded-answer-grid .omr-answer-cell button {
+  width: 100%;
+  white-space: nowrap;
+  padding: 6px 8px;
+  font-size: 12px;
+  border-radius: 8px;
+}
+
+/* 화면이 좁아질 때 반응형 대응 */
+@media (max-width: 900px) {
+  .omr-graded-answer-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}

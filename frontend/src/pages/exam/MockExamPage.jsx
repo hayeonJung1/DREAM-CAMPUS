@@ -10,30 +10,111 @@ import {
   ListChecks,
 } from 'lucide-react';
 import './MockExamPage.css';
+import QuestionNoteEditor from '../../components/exam/QuestionNoteEditor.jsx';
+
+const SCIENCE_ORDER = [
+  '물리학Ⅰ',
+  '화학Ⅰ',
+  '생명과학Ⅰ',
+  '지구과학Ⅰ',
+  '물리학Ⅱ',
+  '화학Ⅱ',
+  '생명과학Ⅱ',
+  '지구과학Ⅱ',
+];
 
 export default function MockExamPage() {
   const [year, setYear] = useState('2027학년도');
   const [month, setMonth] = useState('9월');
-  const [koreanOption, setKoreanOption] = useState('');
-  const [mathOption, setMathOption] = useState('');
-  const [selectedInquiries, setSelectedInquiries] = useState([]);
+  const [koreanOption, setKoreanOption] = useState(
+    () => (window.history.state?.dreamCampusMockView ? window.history.state?.dreamCampusKoreanOption || '' : ''),
+  );
+  const [mathOption, setMathOption] = useState(
+    () => (window.history.state?.dreamCampusMockView ? window.history.state?.dreamCampusMathOption || '' : ''),
+  );
+  const [selectedInquiries, setSelectedInquiries] = useState(
+    () => (window.history.state?.dreamCampusMockView && Array.isArray(window.history.state?.dreamCampusSelectedInquiries)
+      ? window.history.state.dreamCampusSelectedInquiries
+      : []),
+  );
 
   const [apiSubjects, setApiSubjects] = useState([]);
   const [apiLoading, setApiLoading] = useState(false);
   const [apiError, setApiError] = useState('');
 
-  const [view, setView] = useState('selection');
-  const [activeSubjectKey, setActiveSubjectKey] = useState(null);
+  const [view, setView] = useState(() => window.history.state?.dreamCampusMockView || 'selection');
+  const [activeSubjectKey, setActiveSubjectKey] = useState(() => window.history.state?.dreamCampusMockSubject || null);
   const [draftChoiceAnswers, setDraftChoiceAnswers] = useState('');
   const [draftMathAnswers, setDraftMathAnswers] = useState(Array(30).fill(''));
   const [savedAnswers, setSavedAnswers] = useState({});
   const [gradeResult, setGradeResult] = useState(null);
+  const [activeNoteQuestion, setActiveNoteQuestion] = useState(null);
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const years = ['2027학년도', '2026학년도', '2025학년도', '2024학년도'];
   const months = ['3월', '5월', '6월', '7월', '9월', '10월', '11월'];
   const examMonth = Number.parseInt(month, 10);
+
+  const resetAllSelections = () => {
+    setYear('2027학년도');
+    setMonth('9월');
+    setKoreanOption('');
+    setMathOption('');
+    setSelectedInquiries([]);
+    setSavedAnswers({});
+    setGradeResult(null);
+    setActiveSubjectKey(null);
+    setActiveNoteQuestion(null);
+    setMessage('');
+  };
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      const state = event.state || {};
+      if (state.dreamCampusPage === 'mock') {
+        const nextView = state.dreamCampusMockView || 'selection';
+        if (nextView === 'selection') {
+          resetAllSelections();
+        } else {
+          setKoreanOption(state.dreamCampusKoreanOption || '');
+          setMathOption(state.dreamCampusMathOption || '');
+          setSelectedInquiries(
+            Array.isArray(state.dreamCampusSelectedInquiries)
+              ? state.dreamCampusSelectedInquiries
+              : [],
+          );
+          setActiveSubjectKey(state.dreamCampusMockSubject || null);
+          setActiveNoteQuestion(null);
+          setMessage('');
+        }
+        setView(nextView);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const goToMockView = (nextView, nextSubjectKey = activeSubjectKey) => {
+    const isResetToSelection = nextView === 'selection';
+    window.history.pushState(
+      {
+        ...(window.history.state || {}),
+        dreamCampusPage: 'mock',
+        dreamCampusMockView: isResetToSelection ? null : nextView,
+        dreamCampusMockSubject: isResetToSelection ? null : nextSubjectKey,
+        dreamCampusKoreanOption: isResetToSelection ? '' : koreanOption,
+        dreamCampusMathOption: isResetToSelection ? '' : mathOption,
+        dreamCampusSelectedInquiries: isResetToSelection ? [] : selectedInquiries,
+      },
+      '',
+      window.location.href,
+    );
+
+    setView(nextView);
+    setActiveSubjectKey(nextSubjectKey);
+  };
 
   useEffect(() => {
     let isActive = true;
@@ -82,7 +163,12 @@ export default function MockExamPage() {
     .map((subject) => subject.subjectName);
   const scienceStudies = yearsInData
     .filter((subject) => subject.subjectCode.startsWith('SCI_'))
-    .map((subject) => subject.subjectName);
+    .map((subject) => subject.subjectName)
+    .sort((a, b) => {
+      const indexA = SCIENCE_ORDER.indexOf(a);
+      const indexB = SCIENCE_ORDER.indexOf(b);
+      return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+    });
 
   const koreanApiSubject = yearsInData.find(
     (subject) => subject.subjectCode.startsWith('KOR_') && subject.optionName === koreanOption,
@@ -151,6 +237,7 @@ export default function MockExamPage() {
   const clearSavedAnswers = () => {
     setSavedAnswers({});
     setGradeResult(null);
+    setActiveNoteQuestion(null);
     setMessage('');
   };
 
@@ -213,7 +300,6 @@ export default function MockExamPage() {
     if (!target) return;
 
     const existing = savedAnswers[subjectKey];
-    setActiveSubjectKey(subjectKey);
     if (target.type === 'math') {
       setDraftMathAnswers(Array.isArray(existing) ? [...existing] : Array(30).fill(''));
       setDraftChoiceAnswers('');
@@ -221,8 +307,9 @@ export default function MockExamPage() {
       setDraftChoiceAnswers(typeof existing === 'string' ? existing : '');
       setDraftMathAnswers(Array(30).fill(''));
     }
+    setActiveNoteQuestion(null);
     setMessage('');
-    setView('entry');
+    goToMockView('entry', subjectKey);
   };
 
   const confirmExamSelection = () => {
@@ -230,20 +317,28 @@ export default function MockExamPage() {
       setMessage('과목 정보를 불러오고 있습니다. 잠시 후 다시 선택해 주세요.');
       return;
     }
+
     if (apiError || apiSubjects.length === 0) {
       setMessage('선택한 시험의 과목 데이터가 없습니다. 학년도와 시험 월을 확인해 주세요.');
       return;
     }
-    if (!koreanOption || !koreanApiSubject || !mathOption || !mathApiSubject) {
-      setMessage('국어와 수학 선택과목을 각각 하나씩 선택해 주세요.');
+
+    const hasKorean = Boolean(koreanOption && koreanApiSubject);
+    const hasMath = Boolean(mathOption && mathApiSubject);
+    const hasInquiry = selectedInquiries.length > 0;
+
+    if (!hasKorean && !hasMath && !hasInquiry) {
+      setMessage('국어, 수학 또는 탐구 과목 중 하나 이상 선택해 주세요.');
       return;
     }
-    if (selectedInquiries.length < 1 || selectedInquiries.length > 2) {
-      setMessage('사회·과학탐구 과목을 1~2개 선택해 주세요.');
+
+    if (selectedInquiries.length > 2) {
+      setMessage('탐구 과목은 최대 2개까지 선택해 주세요.');
       return;
     }
+
     clearSavedAnswers();
-    setView('subjects');
+    goToMockView('subjects', null);
   };
 
   const saveCurrentAnswers = async () => {
@@ -312,6 +407,7 @@ export default function MockExamPage() {
 
       setGradeResult({
         subjectKey: currentSubject.key,
+        examSubjectId: currentSubject.apiSubject.examSubjectId,
         examTitle: `${year} ${month} 모의고사`,
         subjectName: grade.subjectName,
         optionName: grade.optionName,
@@ -328,7 +424,7 @@ export default function MockExamPage() {
         submittedAnswers: currentSubject.type === 'math' ? [...draftMathAnswers] : draftChoiceAnswers,
       });
 
-      setView('result');
+      goToMockView('result', currentSubject.key);
     } catch (error) {
       setMessage(error.message || '채점 중 오류가 발생했습니다.');
     } finally {
@@ -336,10 +432,20 @@ export default function MockExamPage() {
     }
   };
 
+  const activeExamSubjectId = currentSubject?.apiSubject?.examSubjectId ?? gradeResult?.examSubjectId;
+
+  const openQuestionNote = (questionNumber) => {
+    if (!activeExamSubjectId) {
+      setMessage('현재 과목 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    setActiveNoteQuestion(questionNumber);
+  };
+
   const changeExamSelection = () => {
-    setView('selection');
-    setActiveSubjectKey(null);
     setMessage('');
+    goToMockView('selection', null);
   };
 
   const resetCurrentAnswers = () => {
@@ -393,6 +499,13 @@ export default function MockExamPage() {
                   <small>{item.number}번</small>
                   <strong>{isUnanswered ? '—' : item.isCorrect ? 'O' : 'X'}</strong>
                   <em>내 답: {isUnanswered ? '미응답' : item.submitted} · 정답: {item.correct}</em>
+                  <button
+                    type="button"
+                    className="mock-secondary-button"
+                    onClick={() => openQuestionNote(item.number)}
+                  >
+                    오답노트 작성
+                  </button>
                 </div>
               );
             })}
@@ -413,9 +526,19 @@ export default function MockExamPage() {
 
           <div className="omr-result-actions">
             <button type="button" className="mock-secondary-button" onClick={() => openAnswerSheet(gradeResult.subjectKey)}>답안 수정하기</button>
-            <button type="button" className="mock-confirm-button" onClick={() => setView('subjects')}>과목 목록으로 <ArrowRight size={16} /></button>
+            <button type="button" className="mock-confirm-button" onClick={() => goToMockView('subjects', null)}>과목 목록으로 <ArrowRight size={16} /></button>
           </div>
         </section>
+
+        {activeNoteQuestion !== null && activeExamSubjectId && (
+          <QuestionNoteEditor
+            examSubjectId={activeExamSubjectId}
+            questionNumber={activeNoteQuestion}
+            subjectLabel={gradeResult.subjectName}
+            onClose={() => setActiveNoteQuestion(null)}
+            onSaved={() => {}}
+          />
+        )}
       </div>
     );
   }
@@ -424,7 +547,7 @@ export default function MockExamPage() {
     return (
       <div className="page-content subpage-content mock-page omr-page">
         <div className="breadcrumb">DREAM CAMPUS <ChevronRight size={14} /> MOCK EXAM <ChevronRight size={14} /> {currentSubject.name} 답안 입력</div>
-      <section className="mock-heading mock-heading-sage">
+        <section className="mock-heading mock-heading-sage">
           <div>
             <span className="eyebrow">MOCK EXAM · ANSWER SHEET</span>
             <h1>{currentSubject.name} OMR 답안 입력</h1>
@@ -515,7 +638,7 @@ export default function MockExamPage() {
               {isSubmitting ? '채점 중...' : '제출하고 채점하기'} <ArrowRight size={16} />
             </button>
           </div>
-          <button type="button" className="omr-back-link" onClick={() => { setMessage(''); setView('subjects'); }} disabled={isSubmitting}>← 과목 목록으로 돌아가기</button>
+          <button type="button" className="omr-back-link" onClick={() => { setMessage(''); goToMockView('subjects', null); }} disabled={isSubmitting}>← 과목 목록으로 돌아가기</button>
         </section>
       </div>
     );
@@ -564,7 +687,10 @@ export default function MockExamPage() {
                   <div className="mock-answer-subject-info">
                     <span className="mock-answer-subject-category">{item.key === 'korean' || item.key === 'math' ? '선택과목 포함' : item.key === 'english' || item.key === 'history' ? '필수 영역' : `탐구 ${item.order}선택`}</span>
                     <strong>{item.name}</strong>
-                    <small>{item.detail} · {item.questionCount}문항</small>
+                    <small>
+                      {item.detail} · {item.questionCount}문항
+                      {item.apiSubject.dataStatus === 'DEMO' ? ' · DEMO 테스트 데이터' : ' · 공식 데이터'}
+                    </small>
                   </div>
                   <div className="mock-answer-subject-action">
                     {isSaved && <span className="mock-saved-label"><CheckCircle2 size={14} /> 채점 완료</span>}
@@ -630,7 +756,6 @@ export default function MockExamPage() {
         {!apiLoading && !apiError && apiSubjects.length === 0 && (
           <div className="omr-data-message">선택한 학년도와 시험 월에 등록된 과목 데이터가 없습니다.</div>
         )}
-        <p className="omr-subject-note">공식 정답이 등록된 과목만 자동 채점할 수 있습니다. 정답이 아직 등록되지 않은 과목은 선택할 수 없습니다.</p>
       </section>
 
       <section className="mock-selection-panel">

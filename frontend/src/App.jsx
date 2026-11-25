@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
   CalendarDays, Clock3, FileText, Gamepad2, GraduationCap, Headphones, House, Landmark,
-  Music2, UserRound,
+  Music2, UserRound, NotebookPen,
 } from 'lucide-react';
 import HomePage from './pages/Home/HomePage.jsx';
 import AuthPage from './pages/auth/AuthPage.jsx';
-import MockExamPage from './pages/exam/MockExamPage.jsx';
+import MockExamPage from './pages/Exam/MockExamPage.jsx';
 import MyPage from './pages/mypage/MyPage.jsx';
 import AdmissionCalendarPage from './pages/calendar/CalendarPage.jsx';
 import ArcadePage from './pages/arcade/ArcadePage.jsx';
@@ -14,10 +14,12 @@ import PlaylistPage from './pages/playlist/PlaylistPage.jsx';
 import MainLayout from './layouts/MainLayout.jsx';
 import { createDefaultProfile, normalizeProfile, usePersistentState, getLocalDateKey, createInitialAdmissionEvents, normalizeAdmissionEvents } from './utils/appUtils.js';
 import StudyPage  from './pages/study/StudyPage.jsx'
+import QuestionNotesPage from './pages/notes/QuestionNotesPage.jsx';
 
 const navItems = [
   { id: 'home', label: '홈', icon: House },
   { id: 'mock', label: '모의고사 풀서비스', icon: FileText },
+  { id: 'notes', label: '오답노트', icon: NotebookPen },
   { id: 'timer', label: '공부 타이머', icon: Clock3 },
   { id: 'campus', label: '대학교 및 학과 정보', icon: Landmark },
   { id: 'admission', label: '캘린더', icon: CalendarDays },
@@ -219,14 +221,21 @@ const navigate = (id) => {
 
   if (nextPage === activePage && !authMode) return;
 
-  const nextState = {
-    ...(window.history.state || {}),
-    dreamCampusPage: nextPage,
-    dreamCampusAppEntry: true,
-    dreamCampusPlaylistCategory: null,
-    dreamCampusPlaylistSection: null,
-    dreamCampusArcadeFeature: null,
-  };
+const nextState = {
+  ...(window.history.state || {}),
+  dreamCampusPage: nextPage,
+  dreamCampusAppEntry: true,
+
+  dreamCampusMockView: null,
+  dreamCampusMockSubject: null,
+  dreamCampusKoreanOption: '',
+  dreamCampusMathOption: '',
+  dreamCampusSelectedInquiries: [],
+
+  dreamCampusPlaylistCategory: null,
+  dreamCampusPlaylistSection: null,
+  dreamCampusArcadeFeature: null,
+};
 
   window.history.pushState(
     nextState,
@@ -298,22 +307,39 @@ const closeAuth = () => {
   }
 };
 
-  const handleLogout = async () => {
-  try {
-    const response = await fetch('/api/auth/logout', {
-      method: 'POST',
-      credentials: 'same-origin',
-    });
+const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'same-origin',
+      });
 
-    if (!response.ok) {
-      throw new Error('로그아웃에 실패했습니다.');
+      if (!response.ok) {
+        throw new Error('로그아웃에 실패했습니다.');
+      }
+
+      setAuthUser(null);
+      window.history.pushState(
+        {
+          ...(window.history.state || {}),
+          dreamCampusPage: 'home',
+          dreamCampusAppEntry: true,
+          dreamCampusMockView: null,
+          dreamCampusMockSubject: null,
+        },
+        '',
+        window.location.href,
+      );
+      setActivePage('home');
+      setAuthMode(null);
+    } catch (error) {
+      alert(error.message || '로그아웃 중 오류가 발생했습니다.');
     }
+  };
 
-    setAuthUser(null);
-  } catch (error) {
-    alert(error.message || '로그아웃 중 오류가 발생했습니다.');
-  }
-};
+
+
+
 
 if (authMode) {
   return (
@@ -355,8 +381,12 @@ onLogin={(user) => {
         />
       ) : activePage === 'mock' ? (
         <MockExamPage />
-      ) : activePage === 'mypage' ? (
-        <MyPage profile={profile} onProfileChange={setProfile} />
+   ) : activePage === 'mock' ? (
+  <MockExamPage />
+) : activePage === 'notes' ? (
+  <QuestionNotesPage />
+) : activePage === 'mypage' ? (
+  <MyPage profile={profile} onProfileChange={setProfile} onNavigate={navigate} />
       ) : activePage === 'admission' ? (
         <AdmissionCalendarPage
           events={admissionEvents}
