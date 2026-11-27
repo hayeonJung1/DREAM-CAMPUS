@@ -387,7 +387,13 @@ onLogin={(user) => {
 ) : activePage === 'notes' ? (
   <QuestionNotesPage />
 ) : activePage === 'mypage' ? (
-  <MyPage profile={profile} onProfileChange={setProfile} onNavigate={navigate} />
+ <MyPage
+  profile={profile}
+  onProfileChange={setProfile}
+  authUser={authUser}
+  onNavigate={navigate}
+  onLogout={handleLogout}
+/>
       ) : activePage === 'admission' ? (
         <AdmissionCalendarPage
           events={admissionEvents}
