@@ -34,4 +34,19 @@ public class AnswerKey {
 
     @Column(name = "question_type", nullable = false, length = 10)
     private String questionType;
+
+    public void updateAdminFields(String correctAnswer, Integer points) {
+        if (correctAnswer != null) {
+            if (correctAnswer.isBlank() || correctAnswer.length() > 20) {
+                throw new IllegalArgumentException("정답은 1자 이상 20자 이하로 입력해 주세요.");
+            }
+            this.correctAnswer = correctAnswer.trim();
+        }
+        if (points != null) {
+            if (points < 0 || points > 100) {
+                throw new IllegalArgumentException("배점은 0점 이상 100점 이하로 입력해 주세요.");
+            }
+            this.points = points;
+        }
+    }
 }

@@ -43,4 +43,19 @@ public class ExamSubject {
 
     @Column(name = "data_status", nullable = false, length = 16)
     private String dataStatus;
+
+    public void updateAdminFields(String subjectName, String dataStatus) {
+        if (subjectName != null) {
+            if (subjectName.isBlank() || subjectName.length() > 50) {
+                throw new IllegalArgumentException("과목명은 1자 이상 50자 이하로 입력해 주세요.");
+            }
+            this.subjectName = subjectName.trim();
+        }
+        if (dataStatus != null) {
+            if (!java.util.List.of("OFFICIAL", "DEMO", "NOT_READY").contains(dataStatus)) {
+                throw new IllegalArgumentException("데이터 구분 값이 올바르지 않습니다.");
+            }
+            this.dataStatus = dataStatus;
+        }
+    }
 }

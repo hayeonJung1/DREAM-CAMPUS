@@ -38,6 +38,12 @@ public class Member {
     @Column(name = "daily_goal_minutes")
     private Integer dailyGoalMinutes;
 
+    @Column(name = "role", nullable = false, length = 20)
+    private String role = "USER";
+
+    @Column(name = "status", nullable = false, length = 20)
+    private String status = "ACTIVE";
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -46,6 +52,16 @@ public class Member {
         member.email = email;
         member.password = encodedPassword;
         member.name = name;
+        member.role = "USER";
+        member.status = "ACTIVE";
         return member;
+    }
+
+    public void updateRole(String role) {
+        this.role = role;
+    }
+
+    public void updateStatus(String status) {
+        this.status = status;
     }
 }

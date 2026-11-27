@@ -4,6 +4,7 @@ import com.dreamcampus.backend.user.Member;
 import com.dreamcampus.backend.user.MemberRepository;
 import com.dreamcampus.backend.user.dto.LoginRequest;
 import com.dreamcampus.backend.user.dto.RegisterRequest;
+import com.dreamcampus.backend.common.exception.ApiException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +55,10 @@ public class AuthService {
             throw new IllegalArgumentException(
                     "이메일 또는 비밀번호가 올바르지 않습니다."
             );
+        }
+
+        if ("SUSPENDED".equals(member.getStatus())) {
+            throw ApiException.forbidden("이용이 정지된 계정입니다. 관리자에게 문의해 주세요.");
         }
 
         return member;

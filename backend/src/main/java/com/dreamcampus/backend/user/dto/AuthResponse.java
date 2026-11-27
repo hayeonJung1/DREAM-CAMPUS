@@ -7,7 +7,8 @@ public record AuthResponse(
         String email,
         String name,
         Byte grade,
-        Integer dailyGoalMinutes
+        Integer dailyGoalMinutes,
+        String role
 ) {
     public static AuthResponse from(Member member) {
         return new AuthResponse(
@@ -15,7 +16,8 @@ public record AuthResponse(
                 member.getEmail(),
                 member.getName(),
                 member.getGrade(),
-                member.getDailyGoalMinutes()
+                member.getDailyGoalMinutes(),
+                member.getRole()
         );
     }
 }

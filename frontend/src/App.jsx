@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   CalendarDays, Clock3, FileText, Gamepad2, GraduationCap, Headphones, House, Landmark,
-  Music2, UserRound, NotebookPen,
+  Music2, UserRound, NotebookPen, ShieldCheck,
 } from 'lucide-react';
 import HomePage from './pages/Home/HomePage.jsx';
 import AuthPage from './pages/auth/AuthPage.jsx';
@@ -16,8 +16,9 @@ import { createDefaultProfile, normalizeProfile, usePersistentState, getLocalDat
 import StudyPage  from './pages/study/StudyPage.jsx'
 import QuestionNotesPage from './pages/notes/QuestionNotesPage.jsx';
 import UniversityPage from './pages/university/UniversityPage.jsx';
+import AdminPage from './pages/admin/AdminPage.jsx';
 
-const navItems = [
+const baseNavItems = [
   { id: 'home', label: '홈', icon: House },
   { id: 'mock', label: '모의고사 풀서비스', icon: FileText },
   { id: 'notes', label: '오답노트', icon: NotebookPen },
@@ -27,6 +28,11 @@ const navItems = [
   { id: 'playlist', label: '응원 플레이리스트', icon: Music2 },
   { id: 'arcade', label: '오락실 / 합격 응원', icon: Gamepad2 },
   { id: 'mypage', label: '마이페이지', icon: UserRound },
+];
+
+const allNavItems = [
+  ...baseNavItems,
+  { id: 'admin', label: '관리자 페이지', icon: ShieldCheck },
 ];
 
 const quickMenus = [
@@ -113,11 +119,12 @@ function App() {
   const [activePage, setActivePage] = useState(() => {
   const savedPage = window.history.state?.dreamCampusPage;
 
-  return navItems.some((item) => item.id === savedPage)
+  return allNavItems.some((item) => item.id === savedPage)
     ? savedPage
     : 'home';
 });
  const [authUser, setAuthUser] = useState(null);
+ const navItems = authUser?.role === 'ADMIN' ? allNavItems : baseNavItems;
 
 const [authMode, setAuthMode] = useState(() => {
   const state = window.history.state || {};
@@ -175,7 +182,7 @@ useEffect(() => {
 
 useEffect(() => {
   const currentState = window.history.state || {};
-  const validPage = navItems.some(
+  const validPage = allNavItems.some(
     (item) => item.id === currentState.dreamCampusPage
   );
 
@@ -195,11 +202,12 @@ useEffect(() => {
     const state = event.state || {};
     const requestedPage = state.dreamCampusPage;
 
-    const isValidPage = navItems.some(
+    const isValidPage = allNavItems.some(
       (item) => item.id === requestedPage
     );
+    const canOpenAdmin = requestedPage !== 'admin' || authUser?.role === 'ADMIN';
 
-    setActivePage(isValidPage ? requestedPage : 'home');
+    setActivePage(isValidPage && canOpenAdmin ? requestedPage : 'home');
 
     setAuthMode(
       state.dreamCampusAuth
@@ -213,7 +221,7 @@ useEffect(() => {
   return () => {
     window.removeEventListener('popstate', handlePopState);
   };
-}, []);
+}, [authUser?.role]);
 
 const navigate = (id) => {
   const nextPage = navItems.some((item) => item.id === id)
@@ -387,7 +395,13 @@ onLogin={(user) => {
 ) : activePage === 'notes' ? (
   <QuestionNotesPage />
 ) : activePage === 'mypage' ? (
-  <MyPage profile={profile} onProfileChange={setProfile} onNavigate={navigate} />
+ <MyPage
+  profile={profile}
+  onProfileChange={setProfile}
+  authUser={authUser}
+  onNavigate={navigate}
+  onLogout={handleLogout}
+/>
       ) : activePage === 'admission' ? (
         <AdmissionCalendarPage
           events={admissionEvents}
@@ -408,6 +422,8 @@ onLogin={(user) => {
   <ArcadePage universityName={profile.university} onNavigate={navigate} />
 ) : activePage === 'campus' ? (
   <UniversityPage />
+) : activePage === 'admin' && authUser?.role === 'ADMIN' ? (
+  <AdminPage />
 ) : (
   <PlaceholderPage
     info={pageInfo[activePage] ?? pageInfo.mypage}
