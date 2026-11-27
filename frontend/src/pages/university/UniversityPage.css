@@ -1,0 +1,103 @@
+/* 대학교 정보 페이지 전용 스타일 (접두사 uni-) */
+
+.uni-panel { padding: 22px 24px; }
+.uni-panel + .uni-panel { margin-top: 16px; }
+
+/* ---------- 탭·검색·필터 ---------- */
+
+.uni-tabs { display: flex; gap: 6px; width: fit-content; margin-bottom: 16px; padding: 5px; border: 1px solid var(--line, #E8E8F0); border-radius: 14px; background: var(--surface, #FFFEFD); }
+.uni-tab { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border: 0; border-radius: 10px; background: transparent; color: var(--muted, #85899B); font-size: 12px; font-weight: 800; cursor: pointer; }
+.uni-tab:hover:not(.is-active) { color: #565772; }
+.uni-tab.is-active { background: var(--wine-soft, #F0F0F8); color: var(--wine-dark, #737BA7); }
+
+.uni-search { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 14px; border: 1px solid var(--line, #E8E8F0); border-radius: 12px; background: var(--surface, #FFFEFD); color: var(--muted, #85899B); }
+.uni-search:focus-within { border-color: var(--wine, #8B8FB8); box-shadow: 0 0 0 3px rgba(139, 143, 184, .18); }
+.uni-search input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; color: #44333a; font-size: 13px; }
+
+.uni-filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 12px 0 16px; }
+.uni-filter { padding: 7px 14px; border: 1px solid var(--line, #E8E8F0); border-radius: 999px; background: var(--surface, #FFFEFD); color: #565772; font-size: 12px; font-weight: 700; cursor: pointer; }
+.uni-filter:hover { border-color: var(--wine, #8B8FB8); }
+.uni-filter.is-selected { border-color: var(--wine, #8B8FB8); background: var(--wine-soft, #F0F0F8); color: var(--wine-dark, #737BA7); }
+.uni-count { margin-left: auto; color: var(--muted, #85899B); font-size: 11px; font-weight: 800; }
+
+.uni-notice { margin: 0 0 12px; padding: 10px 13px; border-radius: 10px; background: #FFF8E8; color: #8A6A1F; font-size: 11px; font-weight: 700; }
+.uni-error { margin: 0 0 12px; padding: 10px 13px; border-radius: 10px; background: #FDF0F2; color: #A8435A; font-size: 11px; font-weight: 700; }
+.uni-empty { margin: 0; padding: 32px 0; text-align: center; color: var(--muted, #85899B); font-size: 12px; }
+.uni-muted { color: var(--muted, #85899B); font-size: 11px; font-weight: 700; }
+
+/* ---------- 목록 카드 ---------- */
+
+.uni-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.uni-card { position: relative; border: 1px solid var(--line, #E8E8F0); border-radius: 14px; background: var(--surface, #FFFEFD); transition: border-color .15s, box-shadow .15s; }
+.uni-card:hover { border-color: var(--wine, #8B8FB8); box-shadow: 0 6px 18px rgba(139, 143, 184, .16); }
+.uni-card-main { display: grid; gap: 6px; width: 100%; padding: 15px 52px 15px 16px; border: 0; border-radius: 14px; background: transparent; text-align: left; cursor: pointer; }
+.uni-card-name { color: #565772; font-size: 14px; font-weight: 800; }
+.uni-card-en { color: var(--muted, #85899B); font-size: 10px; font-weight: 700; overflow-wrap: anywhere; }
+.uni-card-address { display: flex; align-items: flex-start; gap: 5px; color: var(--muted, #85899B); font-size: 11px; font-weight: 700; line-height: 1.45; }
+.uni-card-address svg { flex: 0 0 auto; margin-top: 2px; }
+
+.uni-chip-row { display: flex; flex-wrap: wrap; gap: 5px; }
+.uni-chip { padding: 3px 9px; border-radius: 999px; background: var(--wine-soft, #F0F0F8); color: var(--wine-dark, #737BA7); font-size: 10px; font-weight: 800; }
+.uni-chip.is-soft { background: #F4F4F7; color: #7C8094; }
+
+.uni-heart { position: absolute; top: 10px; right: 10px; display: grid; place-items: center; width: 34px; height: 34px; border: 0; border-radius: 10px; background: transparent; color: #B7B9C9; cursor: pointer; }
+.uni-heart:hover:not(:disabled) { background: #FBEFF1; color: #D9647C; }
+.uni-heart.is-on { color: #D9647C; }
+.uni-heart:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ---------- 페이지 이동 ---------- */
+
+.uni-pagination { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 18px; }
+.uni-page-button { display: grid; place-items: center; min-width: 34px; height: 34px; padding: 0 8px; border: 1px solid var(--line, #E8E8F0); border-radius: 10px; background: var(--surface, #FFFEFD); color: #565772; font-size: 12px; font-weight: 800; cursor: pointer; }
+.uni-page-button:hover:not(:disabled):not(.is-active) { border-color: var(--wine, #8B8FB8); }
+.uni-page-button.is-active { border-color: var(--wine, #8B8FB8); background: var(--wine-soft, #F0F0F8); color: var(--wine-dark, #737BA7); }
+.uni-page-button:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ---------- 상세 ---------- */
+
+.uni-back { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 14px; padding: 6px 10px 6px 6px; border: 0; border-radius: 9px; background: transparent; color: var(--wine-dark, #737BA7); font-size: 12px; font-weight: 800; cursor: pointer; }
+.uni-back:hover { background: var(--wine-soft, #F0F0F8); }
+
+.uni-detail-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 16px; }
+.uni-detail-name { margin: 0 0 4px; color: #565772; font-size: 22px; font-weight: 800; }
+.uni-detail-head .uni-chip-row { margin-top: 10px; }
+
+.uni-favorite-button { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 6px; height: 38px; padding: 0 14px; border: 1px solid var(--line, #E8E8F0); border-radius: 11px; background: var(--surface, #FFFEFD); color: #565772; font-size: 12px; font-weight: 800; cursor: pointer; }
+.uni-favorite-button:hover:not(:disabled) { border-color: #E0A6B2; color: #D9647C; }
+.uni-favorite-button.is-on { border-color: #E0A6B2; background: #FBEFF1; color: #D9647C; }
+.uni-favorite-button:disabled { opacity: .5; cursor: not-allowed; }
+
+.uni-info-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0 0 16px; }
+.uni-info-grid > div { padding: 12px 14px; border-radius: 12px; background: var(--wine-soft, #F0F0F8); }
+.uni-info-grid dt { margin-bottom: 4px; color: var(--muted, #85899B); font-size: 10px; font-weight: 800; }
+.uni-info-grid dd { margin: 0; color: #565772; font-size: 12px; font-weight: 800; overflow-wrap: anywhere; }
+
+.uni-link-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.uni-link-button { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+.uni-link-secondary { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px; border: 1px solid var(--line, #E8E8F0); border-radius: 12px; background: var(--surface, #FFFEFD); color: #565772; font-size: 12px; font-weight: 800; text-decoration: none; }
+.uni-link-secondary:hover { border-color: var(--wine, #8B8FB8); }
+
+.uni-section-title { display: flex; align-items: center; gap: 7px; margin-bottom: 14px; color: #565772; font-size: 14px; font-weight: 800; }
+
+/* ---------- 지도 ---------- */
+
+.uni-map-wrap { position: relative; height: 300px; margin: 4px 0 14px; overflow: hidden; border-radius: 14px; background: var(--wine-soft, #F0F0F8); }
+.uni-map { width: 100%; height: 100%; }
+.uni-map-overlay { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 8px; padding: 20px; background: var(--wine-soft, #F0F0F8); color: var(--muted, #85899B); font-size: 12px; font-weight: 700; line-height: 1.55; text-align: center; }
+.uni-map-overlay p { max-width: 420px; margin: 0; }
+
+.uni-campus-info { display: grid; gap: 7px; margin: 0 0 10px; padding: 0; list-style: none; color: #565772; font-size: 12px; font-weight: 700; }
+.uni-campus-info li { display: flex; align-items: flex-start; gap: 7px; }
+.uni-campus-info svg { flex: 0 0 auto; margin-top: 2px; color: var(--muted, #85899B); }
+.uni-campus-info a { color: inherit; }
+
+@media (max-width: 760px) {
+  .uni-grid { grid-template-columns: 1fr; }
+  .uni-info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .uni-panel { padding: 16px; }
+  .uni-detail-head { flex-direction: column; }
+  .uni-map-wrap { height: 240px; }
+}
