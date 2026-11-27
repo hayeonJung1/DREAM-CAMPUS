@@ -15,6 +15,7 @@ import MainLayout from './layouts/MainLayout.jsx';
 import { createDefaultProfile, normalizeProfile, usePersistentState, getLocalDateKey, createInitialAdmissionEvents, normalizeAdmissionEvents } from './utils/appUtils.js';
 import StudyPage  from './pages/study/StudyPage.jsx'
 import QuestionNotesPage from './pages/notes/QuestionNotesPage.jsx';
+import UniversityPage from './pages/university/UniversityPage.jsx';
 
 const navItems = [
   { id: 'home', label: '홈', icon: House },
@@ -403,6 +404,10 @@ onLogin={(user) => {
   <StudyPage />
 ) : activePage === 'playlist' ? (
   <PlaylistPage />
+) : activePage === 'arcade' ? (
+  <ArcadePage universityName={profile.university} onNavigate={navigate} />
+) : activePage === 'campus' ? (
+  <UniversityPage />
 ) : (
   <PlaceholderPage
     info={pageInfo[activePage] ?? pageInfo.mypage}
